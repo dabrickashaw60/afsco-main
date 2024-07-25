@@ -1,0 +1,53 @@
+<h1><%= action_name.capitalize %> New Job</h1>
+
+<%= form_with(model: @job, local: true) do |form| %>
+  <% if @job.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@job.errors.count, "error") %> prohibited this job from being saved:</h2>
+
+      <ul>
+        <% @job.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="form-group">
+    <%= form.label :job_number %>
+    <%= form.text_field :job_number, class: 'form-control' %>
+  </div>
+
+  <div class="form-group">
+    <%= form.label :customer_name %>
+    <%= form.text_field :customer_name, class: 'form-control' %>
+  </div>
+
+  <div class="form-group">
+    <%= form.label :address %>
+    <%= form.text_area :address, class: 'form-control' %>
+  </div>
+
+  <div class="form-group">
+    <%= form.label :customer_phone %>
+    <%= form.text_field :customer_phone, class: 'form-control' %>
+  </div>
+
+  <div class="form-group">
+    <%= form.label :customer_email %>
+    <%= form.email_field :customer_email, class: 'form-control' %>
+  </div>
+
+  <div class="form-group">
+    <%= form.label :total_amount %>
+    <%= form.number_field :total_amount, step: :any, class: 'form-control' %>
+  </div>
+
+  <div class="form-group">
+    <%= form.label :type_of_work %>
+    <%= form.text_field :type_of_work, class: 'form-control' %>
+  </div>
+
+  <%= form.submit class: 'btn btn-primary' %>
+  <%= link_to 'Back', jobs_path, class: 'btn btn-secondary' %>
+<% end %>

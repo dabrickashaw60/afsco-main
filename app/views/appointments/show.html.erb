@@ -1,0 +1,27 @@
+<h2>Appointment Details</h2>
+
+<p>
+  <strong>Title:</strong>
+  <%= @appointment.title %>
+</p>
+
+<p>
+  <strong>Location:</strong>
+  <%= @appointment.location %>
+</p>
+
+<p>
+  <strong>Start Time:</strong>
+  <%= @appointment.start_time.strftime("%m/%d/%Y %I:%M %p") %>
+</p>
+
+<p>
+  <strong>End Time:</strong>
+  <%= @appointment.end_time.strftime("%m/%d/%Y %I:%M %p") %>
+</p>
+
+<p>Created by: <%= @appointment.user.name %></p>
+
+<%= link_to 'Back', root_path, class: 'btn btn-secondary' %> -         <% if @appointment.user == current_user %>
+      <%= link_to 'Delete', appointment_path(@appointment), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger' %>
+    <% end %>

@@ -1,0 +1,41 @@
+<div class="sidebar">
+  <h3>Appointments</h3>
+
+  <%= link_to 'New Appointment', new_appointment_path, class: 'btn btn-primary' %>
+  <h4>Past Appointments</h4>
+
+  <% if @past_appointments.any? %>
+    <ul>
+      <% @past_appointments.each do |appointment| %>
+        <div class="app-holder">
+        <li>
+          <p>Salesman: <%= appointment.user.name %></p>
+          <p>Name: <%= link_to appointment.title, appointment_path(appointment) %></p>         
+          <p>Date: <%= appointment.start_time.strftime("%m/%d/%Y %I:%M %p") %></p>
+          <p>Address: <%= link_to appointment.location, "https://www.google.com/maps/search/?api=1&query=#{CGI.escape(appointment.location)}", target: "_blank" %></p>
+        </li>
+        </div>
+      <% end %>
+    </ul>
+  <% else %>
+    <p>No past appointments.</p>
+  <% end %>
+
+  <h4>Upcoming Appointments</h4>
+  <% if @upcoming_appointments.any? %>
+    <ul>
+      <% @upcoming_appointments.each do |appointment| %>
+        <div class="app-holder">      
+        <li>
+          <p>Salesman: <%= appointment.user.name %></p>
+          <p>Name: <%= link_to appointment.title, appointment_path(appointment) %></p>         
+          <p>Date: <%= appointment.start_time.strftime("%m/%d/%Y %I:%M %p") %></p>
+          <p>Address: <%= link_to appointment.location, "https://www.google.com/maps/search/?api=1&query=#{CGI.escape(appointment.location)}", target: "_blank" %></p>
+        </li>
+        </div>
+      <% end %>
+    </ul>
+  <% else %>
+    <p>No upcoming appointments.</p>
+  <% end %>
+</div>
