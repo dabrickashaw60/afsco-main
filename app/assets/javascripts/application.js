@@ -1,5 +1,6 @@
 // app/assets/javascripts/application.js
 
+//= require leaflet
 //= require turbo
 //= require jquery3
 //= require popper

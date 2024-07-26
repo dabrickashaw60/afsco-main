@@ -22,6 +22,9 @@
 
 <p>Created by: <%= @appointment.user.name %></p>
 
-<%= link_to 'Back', root_path, class: 'btn btn-secondary' %> -         <% if @appointment.user == current_user %>
-      <%= link_to 'Delete', appointment_path(@appointment), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger' %>
+<%= link_to 'Back', root_path, class: 'btn btn-secondary' %> - 
+<%= form_with(url: appointment_path(@appointment), method: :delete, local: true) do |form| %>
+<% if @appointment.user == current_user %>
+  <%= form.submit "Delete", data: { confirm: 'Are you sure?' }, class: 'btn btn-danger'  %>
+<% end %>
     <% end %>

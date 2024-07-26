@@ -1,4 +1,4 @@
-<h1><%= action_name.capitalize %> New Job</h1>
+<h1><%= action_name.capitalize %>  Job</h1>
 
 <%= form_with(model: @job, local: true) do |form| %>
   <% if @job.errors.any? %>
@@ -16,21 +16,35 @@
   <div class="form-group">
     <%= form.label :job_number %>
     <%= form.text_field :job_number, class: 'form-control' %>
-  </div>
 
-  <div class="form-group">
+  
     <%= form.label :customer_name %>
     <%= form.text_field :customer_name, class: 'form-control' %>
   </div>
 
-  <div class="form-group">
+<div class="form-group">
     <%= form.label :address %>
-    <%= form.text_area :address, class: 'form-control' %>
+    <%= form.text_field :address, class: 'form-control' %>
+  </div>
+
+<div class="form-group">
+    <%= form.label :city %>
+    <%= form.text_field :city, class: 'form-control' %>
+  </div>
+
+  <div class="form-group">
+    <%= form.label :state %>
+    <%= form.text_field :state, class: 'form-control' %>
+  </div>
+
+    <div class="form-group">
+    <%= form.label :country %>
+    <%= form.text_field :country, class: 'form-control' %>
   </div>
 
   <div class="form-group">
     <%= form.label :customer_phone %>
-    <%= form.text_field :customer_phone, class: 'form-control' %>
+    <%= form.text_field :customer_phone, class: 'form-control', pattern: '\d{3}-\d{3}-\d{4}', title: 'Phone number format: ###-###-####'  %>
   </div>
 
   <div class="form-group">
@@ -51,3 +65,4 @@
   <%= form.submit class: 'btn btn-primary' %>
   <%= link_to 'Back', jobs_path, class: 'btn btn-secondary' %>
 <% end %>
+

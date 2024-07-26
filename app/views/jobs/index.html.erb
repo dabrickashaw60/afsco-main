@@ -29,7 +29,14 @@
         <td>
           <%= link_to 'Show', job %>
           <%= link_to 'Edit', edit_job_path(job) %>
-          <%= link_to 'Destroy', job, method: :delete, data: { confirm: 'Are you sure?' } %>
+<%= form_with(url: job_path(job), method: :delete, local: true) do |form| %>
+          <% if job.salesman == current_user %>
+  <%= form.submit "Delete", data: { confirm: 'Are you sure?' }, class: 'btn btn-danger'  %>
+<% end %>
+    <% end %>
+
+    
+
         </td>
       </tr>
     <% end %>

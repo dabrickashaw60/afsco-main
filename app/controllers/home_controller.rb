@@ -27,6 +27,10 @@ before_action :set_date_range, only: [:index, :installer_calendar]
     set_date_range
   end
 
+  def map
+    @jobs = Job.all
+  end
+
   private
 
   def set_date_range

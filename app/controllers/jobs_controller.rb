@@ -38,8 +38,12 @@ class JobsController < ApplicationController
   end
 
   def destroy
-    @job.destroy
-    redirect_to jobs_url, notice: 'Job was successfully destroyed.'
+    if @job.present? && @job.salesman == current_user
+      @job.destroy
+      redirect_to root_path, notice: 'Job was successfully deleted.'
+    else
+      redirect_to root_path, alert: 'Job not found or not authorized to delete.'
+    end
   end
 
   private
@@ -49,7 +53,7 @@ class JobsController < ApplicationController
   end
 
   def job_params
-    params.require(:job).permit(:job_number, :customer_name, :address, :customer_phone, :customer_email, :total_amount, :type_of_work, :salesman_id)
+    params.require(:job).permit(:job_number, :customer_name, :address, :customer_phone, :customer_email, :total_amount, :type_of_work, :salesman_id, :city, :state, :country)
   end
 
   def authorize_user!
