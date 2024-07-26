@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_07_25_180851) do
+ActiveRecord::Schema[7.1].define(version: 2024_07_26_030808) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -24,6 +24,16 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_25_180851) do
     t.datetime "updated_at", null: false
     t.string "location"
     t.index ["user_id"], name: "index_appointments_on_user_id"
+  end
+
+  create_table "assignments", force: :cascade do |t|
+    t.bigint "job_id", null: false
+    t.integer "crew", null: false
+    t.date "date", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["crew", "date"], name: "index_assignments_on_crew_and_date", unique: true
+    t.index ["job_id"], name: "index_assignments_on_job_id"
   end
 
   create_table "jobs", force: :cascade do |t|
@@ -42,6 +52,10 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_25_180851) do
     t.string "city"
     t.string "state"
     t.string "country"
+    t.date "install_date"
+    t.boolean "installed", default: false
+    t.date "install_start_date"
+    t.date "install_end_date"
     t.index ["salesman_id"], name: "index_jobs_on_salesman_id"
   end
 
@@ -68,6 +82,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_25_180851) do
   end
 
   add_foreign_key "appointments", "users"
+  add_foreign_key "assignments", "jobs"
   add_foreign_key "jobs", "users", column: "salesman_id"
   add_foreign_key "salesmen", "users"
 end

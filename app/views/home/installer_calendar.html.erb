@@ -27,57 +27,156 @@
             <% (@start_date..@end_date).each do |day| %>
               <% day_class = day.today? ? 'today' : '' %>
               <div class="calendar-day-block <%= day_class %>" style="height: 100px;">
-                <!-- You can add more content here as needed -->
+                <% assignment = Assignment.find_by(crew: row_index + 1, date: day) %>
+                <% if assignment %>
+                  <div>
+                    <%= assignment.job.customer_name %> - <%= assignment.job.address %>
+                    <button onclick="unassignJob('<%= assignment.id %>')">Unassign</button>
+                  </div>
+                <% else %>
+                  <% if current_user.super_admin? %>
+                    <button onclick="openJobSelectionModal('<%= day %>', <%= row_index + 1 %>)">Assign Job</button>
+                  <% end %>
+                <% end %>
               </div>
             <% end %>
           </div>
         <% end %>
       </div>
-      </div>
-      </div>
-          <div class="col-md-3">
-        <div class="job-sidebar">
-          <h3>Jobs</h3>
-          <!-- List of jobs will be displayed here -->
-          <% @jobs.each do |job| %>
-            <div class="job">
-              <strong><%= job.job_number %></strong>
-              <p><%= job.customer_name %></p>
-              <p>Salesman:<%= job.salesman.name %></p>
-            </div>
-          <% end %>
+    </div>
+  </div>
+  
+  <div class="col-md-3">
+    <div class="job-sidebar">
+      <h3>Jobs</h3>
+      <% @jobs.where(installed: false).each do |job| %>
+        <div class="job">
+          <strong><%= job.job_number %></strong>
+          <p><%= job.customer_name %></p>
+          <p>Salesman: <%= job.salesman.name %></p>
         </div>
-        </div>
+      <% end %>
+    </div>
+  </div>
 
-    <style>
-      .calendar-navigation {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 20px;
-      }
+  <!-- Job Selection Modal -->
+  <div id="job-selection-modal" style="display:none;">
+    <h3>Select a Job</h3>
+    <select id="job-select">
+      <% @jobs.where(installed: false).each do |job| %>
+        <option value="<%= job.id %>"><%= job.customer_name %> - <%= job.address %></option>
+      <% end %>
+    </select>
+    <label for="start-date">Start Date:</label>
+    <input type="date" id="start-date" />
+    <label for="end-date">End Date:</label>
+    <input type="date" id="end-date" />
+    <button onclick="assignJobToDate()">Assign</button>
+        <button onclick="closeJobSelectionModal()" style="float:right;">Cancel</button>
+  </div>
 
-      .calendar-header, .calendar-week {
-        display: flex;
-      }
+  <style>
+    .calendar-navigation {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
 
-      .calendar-day, .calendar-crew-header, .calendar-crew {
-        width: 100px;
-        text-align: center;
-        border: 1px solid #ddd;
-        background-color: #f9f9f9;
-        padding: 5px;
-      }
+    .calendar-header, .calendar-week {
+      display: flex;
+    }
 
-      .calendar-day-block {
-        width: 100px;
-        text-align: center;
-        border: 1px solid #ddd;
-        background-color: #fff;
-        padding: 5px;
-      }
+    .calendar-day, .calendar-crew-header, .calendar-crew {
+      width: 100px;
+      text-align: center;
+      border: 1px solid #ddd;
+      background-color: #f9f9f9;
+      padding: 5px;
+    }
 
-      .today {
-        background-color: lightyellow;
+    .calendar-day-block {
+      width: 100px;
+      text-align: center;
+      border: 1px solid #ddd;
+      background-color: #fff;
+      padding: 5px;
+    }
+
+    .today {
+      background-color: lightyellow;
+    }
+
+    .job-sidebar {
+      padding: 20px;
+      background-color: #f9f9f9;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+
+    #job-selection-modal {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: white;
+      padding: 20px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+      border-radius: 5px;
+      z-index: 1000;
+      width: 500px;
+      flex-direction: column;
+    }
+  </style>
+</div>
+
+<script>
+  function openJobSelectionModal(date, crew) {
+    document.getElementById('job-selection-modal').style.display = 'flex';
+    window.selectedDate = date;
+    window.selectedCrew = crew;
+  }
+
+  function closeJobSelectionModal() {
+    document.getElementById('job-selection-modal').style.display = 'none';
+  }
+
+  function assignJobToDate() {
+    var jobId = document.getElementById('job-select').value;
+    var startDate = document.getElementById('start-date').value;
+    var endDate = document.getElementById('end-date').value;
+    var crew = window.selectedCrew;
+
+    fetch('<%= assign_job_path %>', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRF-Token': '<%= form_authenticity_token %>'
+      },
+      body: JSON.stringify({ job_id: jobId, start_date: startDate, end_date: endDate, crew: crew })
+    }).then(response => {
+      if (response.ok) {
+        window.location.reload();
+      } else {
+        alert('Error assigning job.');
       }
-    </style>
+    });
+  }
+
+  function unassignJob(assignmentId) {
+    fetch('<%= unassign_job_path %>', {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRF-Token': '<%= form_authenticity_token %>'
+      },
+      body: JSON.stringify({ assignment_id: assignmentId })
+    }).then(response => {
+      if (response.ok) {
+        window.location.reload();
+      } else {
+        alert('Error unassigning job.');
+      }
+    });
+  }
+</script>

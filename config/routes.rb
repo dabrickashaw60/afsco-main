@@ -6,6 +6,8 @@ Rails.application.routes.draw do
   get 'map', to: 'home#map', as: 'map'
   resources :appointments
   resources :jobs
+  post 'assign_job', to: 'jobs#assign_job'
+  delete 'unassign_job', to: 'jobs#unassign_job'
 
   get 'installer_calendar', to: 'home#installer_calendar'
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.

@@ -1,0 +1,11 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  job: one
+  crew: 1
+  date: 2024-07-25
+
+two:
+  job: two
+  crew: 1
+  date: 2024-07-25
