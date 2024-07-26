@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_07_26_030808) do
+ActiveRecord::Schema[7.1].define(version: 2024_07_26_173545) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -56,6 +56,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_26_030808) do
     t.boolean "installed", default: false
     t.date "install_start_date"
     t.date "install_end_date"
+    t.string "crew"
     t.index ["salesman_id"], name: "index_jobs_on_salesman_id"
   end
 

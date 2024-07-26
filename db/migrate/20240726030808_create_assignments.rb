@@ -7,6 +7,5 @@ class CreateAssignments < ActiveRecord::Migration[7.1]
 
       t.timestamps
     end
-    add_index :assignments, [:crew, :date], unique: true
   end
 end

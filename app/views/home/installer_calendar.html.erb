@@ -2,11 +2,16 @@
   <div class="col-md-9">
     <div class="calendar-navigation">
       <%= link_to '<', installer_calendar_path(week: (@current_week == 1 ? 52 : @current_week - 1), year: (@current_week == 1 ? @current_year - 1 : @current_year)), class: 'nav-arrow' %>
+      
       <div class="current-week">
-        Week <%= @current_week %>, <%= @current_year %>
+        Week Ending: <%= @end_date.strftime("%m/%d/%y") %>
       </div>
+      
       <%= link_to '>', installer_calendar_path(week: (@current_week == 52 ? 1 : @current_week + 1), year: (@current_week == 52 ? @current_year + 1 : @current_year)), class: 'nav-arrow' %>
       <%= link_to 'Back to Appointments Calendar', root_path, class: 'btn btn-secondary' %>
+      <% if current_user.super_admin? %>
+        <button onclick="openJobSelectionModal()" class="btn btn-primary" style="margin-left: 10px;">Assign Job</button>
+      <% end %>
     </div>
 
     <div class="calendar">
@@ -18,13 +23,13 @@
         <div class="calendar-day">Thu</div>
         <div class="calendar-day">Fri</div>
         <div class="calendar-day">Sat</div>
-        <div class="calendar-day">Sun</div>
       </div>
       <div class="calendar-body">
         <% 10.times do |row_index| %>
           <div class="calendar-week">
             <div class="calendar-crew">Crew <%= row_index + 1 %></div>
             <% (@start_date..@end_date).each do |day| %>
+              <% next if day.sunday? %> <!-- Skip Sundays -->
               <% day_class = day.today? ? 'today' : '' %>
               <div class="calendar-day-block <%= day_class %>" style="height: 100px;">
                 <% assignment = Assignment.find_by(crew: row_index + 1, date: day) %>
@@ -33,10 +38,6 @@
                     <%= assignment.job.customer_name %> - <%= assignment.job.address %>
                     <button onclick="unassignJob('<%= assignment.id %>')">Unassign</button>
                   </div>
-                <% else %>
-                  <% if current_user.super_admin? %>
-                    <button onclick="openJobSelectionModal('<%= day %>', <%= row_index + 1 %>)">Assign Job</button>
-                  <% end %>
                 <% end %>
               </div>
             <% end %>
@@ -60,20 +61,28 @@
   </div>
 
   <!-- Job Selection Modal -->
-  <div id="job-selection-modal" style="display:none;">
-    <h3>Select a Job</h3>
-    <select id="job-select">
-      <% @jobs.where(installed: false).each do |job| %>
-        <option value="<%= job.id %>"><%= job.customer_name %> - <%= job.address %></option>
-      <% end %>
-    </select>
-    <label for="start-date">Start Date:</label>
-    <input type="date" id="start-date" />
-    <label for="end-date">End Date:</label>
-    <input type="date" id="end-date" />
-    <button onclick="assignJobToDate()">Assign</button>
-        <button onclick="closeJobSelectionModal()" style="float:right;">Cancel</button>
-  </div>
+<div id="job-selection-modal" style="display:none;">
+  <h3>Select a Job</h3>
+  <select id="job-select">
+    <% @jobs.where(installed: false).each do |job| %>
+      <option value="<%= job.id %>"><%= job.customer_name %> - <%= job.address %></option>
+    <% end %>
+  </select>
+  
+  <h3>Select a Crew</h3>
+  <select id="crew-select">
+    <% 10.times do |i| %>
+      <option value="<%= i + 1 %>">Crew <%= i + 1 %></option>
+    <% end %>
+  </select>
+
+  <label for="start-date">Start Date:</label>
+  <input type="date" id="start-date" />
+  <label for="end-date">End Date:</label>
+  <input type="date" id="end-date" />
+  <button onclick="assignJobToDate()">Assign</button>
+  <button onclick="closeJobSelectionModal()" style="float:right;">Cancel</button>
+</div>
 
   <style>
     .calendar-navigation {
@@ -131,37 +140,42 @@
 </div>
 
 <script>
-  function openJobSelectionModal(date, crew) {
+  function openJobSelectionModal() {
     document.getElementById('job-selection-modal').style.display = 'flex';
-    window.selectedDate = date;
-    window.selectedCrew = crew;
   }
 
   function closeJobSelectionModal() {
     document.getElementById('job-selection-modal').style.display = 'none';
   }
 
-  function assignJobToDate() {
-    var jobId = document.getElementById('job-select').value;
-    var startDate = document.getElementById('start-date').value;
-    var endDate = document.getElementById('end-date').value;
-    var crew = window.selectedCrew;
+function assignJobToDate() {
+  var jobId = document.getElementById('job-select').value;
+  var startDate = document.getElementById('start-date').value;
+  var endDate = document.getElementById('end-date').value;
+  var crew = document.getElementById('crew-select').value;
 
-    fetch('<%= assign_job_path %>', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-CSRF-Token': '<%= form_authenticity_token %>'
-      },
-      body: JSON.stringify({ job_id: jobId, start_date: startDate, end_date: endDate, crew: crew })
-    }).then(response => {
-      if (response.ok) {
-        window.location.reload();
-      } else {
-        alert('Error assigning job.');
-      }
-    });
-  }
+  fetch('<%= assign_job_path %>', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRF-Token': '<%= form_authenticity_token %>'
+    },
+    body: JSON.stringify({ job_id: jobId, start_date: startDate, end_date: endDate, crew: crew })
+  }).then(response => {
+    if (response.ok) {
+      window.location.reload();
+    } else {
+      response.json().then(data => {
+        alert('Error assigning job: ' + (data.message || 'Unknown error'));
+      });
+    }
+  }).catch(error => {
+    console.error('Fetch error:', error);
+    alert('Error assigning job: ' + error.message);
+  });
+}
+
+
 
   function unassignJob(assignmentId) {
     fetch('<%= unassign_job_path %>', {

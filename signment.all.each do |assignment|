@@ -1,0 +1,29 @@
+=> 
+[[32m#<Assignment:0x0000738457749880[0m
+  id: [34m[1m12[0m,
+  job_id: [34m[1m41[0m,
+  crew: [34m[1m1[0m,
+  date: Fri, 26 Jul 2024,
+  created_at: Fri, 26 Jul 2024 14:01:18.406409000 EDT -04:00,
+  updated_at: Fri, 26 Jul 2024 14:01:18.406409000 EDT -04:00[32m>[0m,
+ [32m#<Assignment:0x0000738457749600[0m
+  id: [34m[1m13[0m,
+  job_id: [34m[1m41[0m,
+  crew: [34m[1m1[0m,
+  date: Sat, 27 Jul 2024,
+  created_at: Fri, 26 Jul 2024 14:01:18.419268000 EDT -04:00,
+  updated_at: Fri, 26 Jul 2024 14:01:18.419268000 EDT -04:00[32m>[0m,
+ [32m#<Assignment:0x00007384577494c0[0m
+  id: [34m[1m14[0m,
+  job_id: [34m[1m41[0m,
+  crew: [34m[1m1[0m,
+  date: Sun, 28 Jul 2024,
+  created_at: Fri, 26 Jul 2024 14:01:18.422906000 EDT -04:00,
+  updated_at: Fri, 26 Jul 2024 14:01:18.422906000 EDT -04:00[32m>[0m,
+ [32m#<Assignment:0x0000738457749380[0m
+  id: [34m[1m15[0m,
+  job_id: [34m[1m41[0m,
+  crew: [34m[1m1[0m,
+  date: Mon, 29 Jul 2024,
+  created_at: Fri, 26 Jul 2024 14:01:18.426300000 EDT -04:00,
+  updated_at: Fri, 26 Jul 2024 14:01:18.426300000 EDT -04:00[32m>[0m]

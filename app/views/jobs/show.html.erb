@@ -8,6 +8,10 @@
 <p><strong>Customer Email:</strong> <%= @job.customer_email %></p>
 <p><strong>Total Amount:</strong> <%= number_to_currency(@job.total_amount) %></p>
 <p><strong>Type of Work:</strong> <%= @job.type_of_work %></p>
+<p><strong>Installed?</strong> <%= @job.installed %></p>
+<p><strong>Install Date:</strong> <%= @job.install_date %></p>
+<p><strong>Install Start Date:</strong> <%= @job.install_start_date %></p>
+<p><strong>Install End Date:</strong> <%= @job.install_end_date %></p>
 
 <%= link_to 'Edit', edit_job_path(@job), class: 'btn btn-primary' %>
 <%= link_to 'Back', jobs_path, class: 'btn btn-secondary' %>
