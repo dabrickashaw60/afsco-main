@@ -1,0 +1,35 @@
+<%= form_with(model: @crew, local: true) do |form| %>
+  <% if @crew.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@crew.errors.count, "error") %> prohibited this crew from being saved:</h2>
+      <ul>
+        <% @crew.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="form-group">
+    <%= form.label :name %>
+    <%= form.text_field :name, class: 'form-control' %>
+  </div>
+
+  <div class="form-group">
+    <%= form.label :foreman_id, 'Foreman' %>
+    <%= form.collection_select :foreman_id, @users, :id, :name, { include_blank: true }, class: 'form-control' %>
+  </div>
+
+  <div class="form-group">
+    <%= form.label :laborer1_id, 'Laborer 1' %>
+    <%= form.collection_select :laborer1_id, @users, :id, :name, { include_blank: true }, class: 'form-control' %>
+  </div>
+
+  <div class="form-group">
+    <%= form.label :laborer2_id, 'Laborer 2' %>
+    <%= form.collection_select :laborer2_id, @users, :id, :name, { include_blank: true }, class: 'form-control' %>
+  </div>
+
+  <%= form.submit class: 'btn btn-primary' %>
+  <%= link_to 'Back', crews_path, class: 'btn btn-secondary' %>
+<% end %>

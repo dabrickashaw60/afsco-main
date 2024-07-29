@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_07_26_173545) do
+ActiveRecord::Schema[7.1].define(version: 2024_07_29_162904) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -28,12 +28,21 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_26_173545) do
 
   create_table "assignments", force: :cascade do |t|
     t.bigint "job_id", null: false
-    t.integer "crew", null: false
+    t.bigint "crew_id", null: false
     t.date "date", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["crew", "date"], name: "index_assignments_on_crew_and_date", unique: true
+    t.index ["crew_id", "date"], name: "index_assignments_on_crew_id_and_date", unique: true
     t.index ["job_id"], name: "index_assignments_on_job_id"
+  end
+
+  create_table "crews", force: :cascade do |t|
+    t.string "name"
+    t.integer "foreman_id"
+    t.integer "laborer1_id"
+    t.integer "laborer2_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "jobs", force: :cascade do |t|
@@ -57,6 +66,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_26_173545) do
     t.date "install_start_date"
     t.date "install_end_date"
     t.string "crew"
+    t.integer "crew_id"
     t.index ["salesman_id"], name: "index_jobs_on_salesman_id"
   end
 
@@ -69,7 +79,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_26_173545) do
   end
 
   create_table "users", force: :cascade do |t|
-    t.string "email", default: "", null: false
+    t.string "email", default: ""
     t.string "encrypted_password", default: "", null: false
     t.string "reset_password_token"
     t.datetime "reset_password_sent_at"
@@ -78,12 +88,16 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_26_173545) do
     t.datetime "updated_at", null: false
     t.string "name"
     t.string "role"
-    t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["email"], name: "index_users_on_email", unique: true, where: "(email IS NOT NULL)"
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
   add_foreign_key "appointments", "users"
+  add_foreign_key "assignments", "crews"
   add_foreign_key "assignments", "jobs"
+  add_foreign_key "crews", "users", column: "foreman_id"
+  add_foreign_key "crews", "users", column: "laborer1_id"
+  add_foreign_key "crews", "users", column: "laborer2_id"
   add_foreign_key "jobs", "users", column: "salesman_id"
   add_foreign_key "salesmen", "users"
 end

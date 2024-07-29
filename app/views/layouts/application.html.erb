@@ -31,9 +31,18 @@
           <li class="nav-item">
             <%= link_to 'Map', map_path, class: 'nav-link' %>
           </li>
+<% if current_user && current_user.super_admin? %>
+  <li class="nav-item"><%= link_to 'Manage Crews', crews_path, class: 'nav-link' %></li>
+<% end %>
+
         </ul>
         <ul class="navbar-nav ml-auto">
           <% if user_signed_in? %>
+                    <% if current_user.super_admin? %>
+            <li class="nav-item">
+              <%= link_to 'Manage Users', admin_users_path, class: 'btn btn-outline-primary mr-2' %>
+            </li>
+          <% end %>
             <li class="nav-item">
               <%= link_to 'Logout', destroy_user_session_path, method: :delete, data: { no_turbolink: true }, class: 'nav-link' %>
             </li>

@@ -1,5 +1,6 @@
 class Job < ApplicationRecord
   belongs_to :salesman, class_name: 'User'
+  belongs_to :crew, optional: true
   has_many :assignments, dependent: :destroy
 
   geocoded_by :full_address

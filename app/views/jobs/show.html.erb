@@ -9,6 +9,7 @@
 <p><strong>Total Amount:</strong> <%= number_to_currency(@job.total_amount) %></p>
 <p><strong>Type of Work:</strong> <%= @job.type_of_work %></p>
 <p><strong>Installed?</strong> <%= @job.installed %></p>
+<p><strong>Install By:</strong> <%= @job.crew.name %>
 <p><strong>Install Date:</strong> <%= @job.install_date %></p>
 <p><strong>Install Start Date:</strong> <%= @job.install_start_date %></p>
 <p><strong>Install End Date:</strong> <%= @job.install_end_date %></p>

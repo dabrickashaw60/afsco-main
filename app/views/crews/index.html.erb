@@ -1,0 +1,28 @@
+<h1>Manage Crews</h1>
+<%= link_to 'New Crew', new_crew_path, class: 'btn btn-primary' %>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Foreman</th>
+      <th>Laborer 1</th>
+      <th>Laborer 2</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @crews.each do |crew| %>
+      <tr>
+        <td><%= crew.name %></td>
+        <td><%= crew.foreman&.name %></td>
+        <td><%= crew.laborer1&.name %></td>
+        <td><%= crew.laborer2&.name %></td>
+        <td>
+          <%= link_to 'Edit', edit_crew_path(crew), class: 'btn btn-secondary' %>
+          <%= link_to 'Delete', crew, method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger' %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

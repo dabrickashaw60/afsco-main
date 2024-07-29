@@ -48,25 +48,26 @@ class JobsController < ApplicationController
 
   def assign_job
     job = Job.find(params[:job_id])
-    crew = params[:crew]
     start_date = Date.parse(params[:start_date])
     end_date = Date.parse(params[:end_date])
+    crew_id = params[:crew_id].to_i # Assuming crew_id is passed as an integer
   
-    if crew.blank?
-      render json: { status: 'error', message: "Crew can't be blank" }, status: :unprocessable_entity
-      return
-    end
+    # Clear any previous assignments for the same job and crew in the date range
+    Assignment.where(job_id: job.id, crew_id: crew_id, date: start_date..end_date).destroy_all
   
+    # Create assignments for each day in the date range
     (start_date..end_date).each do |date|
-      Assignment.create!(job: job, crew: crew, date: date)
+      Assignment.create!(job_id: job.id, crew_id: crew_id, date: date)
     end
   
-    job.update(install_start_date: start_date, install_end_date: end_date)
+    # Update the job's install dates and associated crew_id
+    job.update(install_start_date: start_date, install_end_date: end_date, crew_id: crew_id)
   
     render json: { status: 'success' }, status: :ok
   rescue => e
     render json: { status: 'error', message: e.message }, status: :unprocessable_entity
   end
+  
   
   
   
