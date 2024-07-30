@@ -8,34 +8,21 @@ class JobsController < ApplicationController
     @jobs = Job.all
 
     if params[:search].present?
-<<<<<<< HEAD
       @jobs = @jobs.joins(:salesman).where("job_number LIKE ? OR customer_name LIKE ? OR users.name LIKE ?", 
                         "%#{params[:search]}%", "%#{params[:search]}%", "%#{params[:search]}%")
     end
-  
-=======
-      @jobs = @jobs.joins(:salesman)
-                   .where("job_number LIKE ? OR customer_name LIKE ? OR users.name LIKE ?", 
-                          "%#{params[:search]}%", "%#{params[:search]}%", "%#{params[:search]}%")
-    end
 
->>>>>>> 8807f17546a5cd23e9025e9b0398549d4cf9b23a
     if params[:sort] == 'salesman'
       @jobs = @jobs.joins(:salesman)
     end
 
     @jobs = @jobs.order(sort_column + ' ' + sort_direction)
-<<<<<<< HEAD
 
     respond_to do |format|
       format.html
       format.js # This will render index.js.erb
     end
-    
-=======
->>>>>>> 8807f17546a5cd23e9025e9b0398549d4cf9b23a
   end
-
   def show
   end
 
