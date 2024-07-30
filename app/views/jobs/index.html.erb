@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <div class="d-flex justify-content-between align-items-center mb-3">
   <div class="d-flex align-items-center">
       <h1 class="mx-3 my-0">Jobs</h1>
@@ -27,6 +28,56 @@
         <th>Type of Work</th>
         <th><%= link_to 'Created At', jobs_path(sort: 'created_at', direction: sort_direction('created_at')) %></th>
         <th></th>
+=======
+<h1>Jobs</h1>
+<%= link_to 'New Job', new_job_path, class: 'btn btn-primary' %>
+
+<div class="search-bar">
+  <%= form_with url: jobs_path, method: :get, local: true do |form| %>
+    <%= form.label :search, "Search:" %>
+    <%= form.text_field :search, value: params[:search], class: 'form-control', placeholder: 'Search by job number, customer name, or salesman...' %>
+    <%= form.submit 'Search', class: 'btn btn-primary' %>
+  <% end %>
+</div>
+
+
+<table class="table">
+  <thead>
+    <tr>
+      <th><%= link_to 'Job Number', jobs_path(sort: 'job_number', direction: sort_direction('job_number')) %></th>
+      <th><%= link_to 'Salesman', jobs_path(sort: 'salesman', direction: sort_direction('salesman')) %></th>
+      <th><%= link_to 'Customer Name', jobs_path(sort: 'customer_name', direction: sort_direction('customer_name')) %></th>
+      <th>Address</th>
+      <th>Customer Phone</th>
+      <th>Customer Email</th>
+      <th>Total Amount</th>
+      <th>Type of Work</th>
+      <th><%= link_to 'Created At', jobs_path(sort: 'created_at', direction: sort_direction('created_at')) %></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @jobs.each do |job| %>
+      <tr>
+        <td><%= job.job_number %></td>
+        <td><%= job.salesman.name %></td>
+        <td><%= job.customer_name %></td>
+        <td><%= job.address %></td>
+        <td><%= job.customer_phone %></td>
+        <td><%= job.customer_email %></td>
+        <td><%= number_to_currency(job.total_amount) %></td>
+        <td><%= job.type_of_work %></td>
+        <td><%= job.created_at.strftime("%m/%d/%Y") %></td>
+        <td>
+          <%= link_to 'Show', job %>
+          <%= link_to 'Edit', edit_job_path(job) %>
+          <% if job.salesman == current_user %>
+            <%= form_with(url: job_path(job), method: :delete, local: true) do |form| %>
+              <%= form.submit "Delete", data: { confirm: 'Are you sure?' }, class: 'btn btn-danger' %>
+            <% end %>
+          <% end %>
+        </td>
+>>>>>>> 8807f17546a5cd23e9025e9b0398549d4cf9b23a
       </tr>
     </thead>
     <tbody>
