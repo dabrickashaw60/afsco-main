@@ -21,7 +21,6 @@
     <% if @view_type == 'weekly' %>
       <div class="calendar">
         <div class="calendar-header">
-          <div class="calendar-day">Sun</div>
           <div class="calendar-day">Mon</div>
           <div class="calendar-day">Tue</div>
           <div class="calendar-day">Wed</div>
@@ -31,9 +30,10 @@
         </div>
         <div class="calendar-body">
           <div class="calendar-week">
-            <% (@start_date..@end_date).each do |day| %>
-            <% day_class = day.today? ? 'today' : '' %>
-              <div class="calendar-day-block <%= 'outside-month' unless day.month == @current_month %><%= day_class %>" style="height: 1000px;">
+            <% (1..6).each do |day_of_week| %> <!-- Monday is 1, Saturday is 6 -->
+              <% day = @start_date + (day_of_week - 1).days %>
+              <% day_class = day.today? ? 'today' : '' %>
+              <div class="calendar-day-block <%= day_class %>" style="height: 1000px;" data-date="<%= day.to_s %>">
                 <div class="calendar-day-number"><%= day.day %></div>
                 <% @appointments = Appointment.where(start_time: day.beginning_of_day..day.end_of_day) %>
                 <% @appointments.each do |appointment| %>
@@ -51,20 +51,19 @@
     <% else %>
       <div class="calendar">
         <div class="calendar-header">
-          <div class="calendar-day">Sun</div>
           <div class="calendar-day">Mon</div>
           <div class="calendar-day">Tue</div>
           <div class="calendar-day">Wed</div>
           <div class="calendar-day">Thu</div>
           <div class="calendar-day">Fri</div>
           <div class="calendar-day">Sat</div>
+          <div class="calendar-day">Sun</div>
         </div>
         <div class="calendar-body">
           <% (@start_date..@end_date).to_a.each_slice(7) do |week| %>
             <div class="calendar-week">
               <% week.each do |day| %>
-              <% day_class = day.today? ? 'today' : '' %>
-                <div class="calendar-day-block <%= 'outside-month' unless day.month == @current_month %><%= day_class %>">
+                <div class="calendar-day-block <%= day.today? ? 'today' : '' %>" data-date="<%= day.to_s %>">
                   <div class="calendar-day-number"><%= day.day %></div>
                   <% @appointments = Appointment.where(start_time: day.beginning_of_day..day.end_of_day) %>
                   <% @appointments.each do |appointment| %>
@@ -83,8 +82,59 @@
     <% end %>
   </div>
 
-  <div class="col-md-3">
-<%= render 'appointments/appointments_sidebar' %>
+  <div id="new-appointment-modal" style="display:none;">
+    <div class="modal-content">
+      <span class="close-button" onclick="closeNewAppointmentModal()">&times;</span>
+      <h3>New Appointment</h3>
+      <%= form_with(model: @appointment, url: appointments_path, method: :post, local: true) do |form| %>
+        <div class="form-group">
+          <%= form.label :title, "Appointment Title" %>
+          <%= form.text_field :title, class: "form-control" %>
+        </div>
+        <div class="form-group">
+          <%= form.label :location, "Location" %>
+          <%= form.text_field :location, class: "form-control" %>
+        </div>
+        <div class="form-group">
+          <%= form.label :start_time, "Start Time" %>
+          <%= form.datetime_local_field :start_time, class: "form-control", id: "start-time-field" %>
+        </div>
+        <div class="form-group">
+          <%= form.label :end_time, "End Time" %>
+          <%= form.datetime_local_field :end_time, class: "form-control" %>
+        </div>
+        <div class="form-group">
+          <%= form.label :user_id, "Salesman" %>
+          <%= form.collection_select :user_id, User.all, :id, :name, prompt: "Select Salesman", class: "form-control" %>
+        </div>
+        <div class="actions">
+        <%= form.submit "Create Appointment", class: "btn btn-primary" %>
+        </div>
+      <% end %>
     </div>
   </div>
 
+  <div class="col-md-3">
+    <%= render 'appointments/appointments_sidebar' %>
+  </div>
+</div>
+
+<script>
+  function openNewAppointmentModal(date) {
+    document.getElementById('start-time-field').value = date + "T09:00"; // Default start time
+    document.getElementById('new-appointment-modal').style.display = 'block';
+  }
+
+  function closeNewAppointmentModal() {
+    document.getElementById('new-appointment-modal').style.display = 'none';
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.calendar-day-block').forEach(function (element) {
+      element.addEventListener('click', function () {
+        const date = element.getAttribute('data-date');
+        openNewAppointmentModal(date);
+      });
+    });
+  });
+</script>
