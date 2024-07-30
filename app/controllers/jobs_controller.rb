@@ -28,6 +28,7 @@ class JobsController < ApplicationController
 
   def new
     @job = Job.new
+    @salesmen = User.where(role: 'salesman')
   end
 
   def create
@@ -35,11 +36,13 @@ class JobsController < ApplicationController
     if @job.save
       redirect_to @job, notice: 'Job was successfully created.'
     else
-      render :new
+      puts @job.errors.full_messages # Add this line to print errors to the server log
+      render :new, status: :unprocessable_entity
     end
   end
 
   def edit
+    @salesmen = User.where(role: 'salesman')
   end
 
   def update

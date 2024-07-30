@@ -1,17 +1,22 @@
 <h1><%= action_name.capitalize %>  Job</h1>
 
 <%= form_with(model: @job, local: true) do |form| %>
-  <% if @job.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(@job.errors.count, "error") %> prohibited this job from being saved:</h2>
 
-      <ul>
-        <% @job.errors.full_messages.each do |message| %>
-          <li><%= message %></li>
-        <% end %>
-      </ul>
-    </div>
-  <% end %>
+    <% if @job.errors.any? %>
+      <div id="error_explanation">
+        <h2><%= pluralize(@job.errors.count, "error") %> prohibited this job from being saved:</h2>
+        <ul>
+          <% @job.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+  <div class="form-group">
+    <%= form.label :salesman_id, "Salesman" %>
+    <%= form.collection_select :salesman_id, @salesmen, :id, :name, { prompt: "Select Salesman" }, { class: 'form-control' } %>
+  </div>
 
   <div class="form-group">
     <%= form.label :job_number %>
