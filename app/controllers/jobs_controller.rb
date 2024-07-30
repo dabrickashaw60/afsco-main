@@ -6,6 +6,23 @@ class JobsController < ApplicationController
 
   def index
     @jobs = Job.all
+
+    if params[:search].present?
+      @jobs = @jobs.joins(:salesman).where("job_number LIKE ? OR customer_name LIKE ? OR users.name LIKE ?", 
+                        "%#{params[:search]}%", "%#{params[:search]}%", "%#{params[:search]}%")
+    end
+  
+    if params[:sort] == 'salesman'
+      @jobs = @jobs.joins(:salesman)
+    end
+
+    @jobs = @jobs.order(sort_column + ' ' + sort_direction)
+
+    respond_to do |format|
+      format.html
+      format.js # This will render index.js.erb
+    end
+    
   end
 
   def show
@@ -17,10 +34,8 @@ class JobsController < ApplicationController
 
   def create
     @job = Job.new(job_params)
-    @job.salesman = current_user
-
     if @job.save
-      redirect_to job_path(@job), notice: 'Job was successfully created.'
+      redirect_to @job, notice: 'Job was successfully created.'
     else
       render :new
     end
@@ -50,41 +65,29 @@ class JobsController < ApplicationController
     job = Job.find(params[:job_id])
     start_date = Date.parse(params[:start_date])
     end_date = Date.parse(params[:end_date])
-    crew_id = params[:crew_id].to_i # Assuming crew_id is passed as an integer
-  
-    # Clear any previous assignments for the same job and crew in the date range
+    crew_id = params[:crew_id].to_i
+
     Assignment.where(job_id: job.id, crew_id: crew_id, date: start_date..end_date).destroy_all
-  
-    # Create assignments for each day in the date range
+
     (start_date..end_date).each do |date|
       Assignment.create!(job_id: job.id, crew_id: crew_id, date: date)
     end
-  
-    # Update the job's install dates and associated crew_id
+
     job.update(install_start_date: start_date, install_end_date: end_date, crew_id: crew_id)
-  
+
     render json: { status: 'success' }, status: :ok
   rescue => e
     render json: { status: 'error', message: e.message }, status: :unprocessable_entity
   end
-  
-  
-  
-  
 
   def unassign_job
     assignment = Assignment.find_by(id: params[:assignment_id])
-    
+
     if assignment
-      # Check if the assignment's job has other assignments
-      other_assignments = Assignment.where(job: assignment.job).where.not(id: assignment.id)
-
-      # Destroy the current assignment
+      job = assignment.job
       assignment.destroy
-
-      # If no other assignments exist for the job, reset the install dates
-      if other_assignments.empty?
-        assignment.job.update(install_start_date: nil, install_end_date: nil, installed: false, install_date: nil)
+      if job.assignments.empty?
+        job.update(crew: nil, install_start_date: nil, install_end_date: nil)
       end
 
       render json: { status: 'success' }, status: :ok
@@ -100,14 +103,30 @@ class JobsController < ApplicationController
   end
 
   def job_params
-    params.require(:job).permit(:job_number, :customer_name, :address, :customer_phone, :customer_email, :total_amount, :type_of_work, :salesman_id, :city, :state, :country, :crew)
+    params.require(:job).permit(:job_number, :customer_name, :address, :customer_phone, :customer_email, :total_amount, :type_of_work, :salesman_id, :city, :state, :country, :crew_id)
   end
 
   def authorize_user!
-    redirect_to root_path, alert: 'Not authorized' unless @job.salesman == current_user
+    redirect_to root_path, alert: 'Not authorized' unless @job.salesman == current_user || current_user.super_admin?
   end
 
   def authorize_super_admin
     redirect_to root_path, alert: 'Not authorized' unless current_user.super_admin?
+  end
+
+  def sort_column
+    case params[:sort]
+    when 'job_number', 'customer_name', 'created_at'
+      params[:sort]
+    when 'salesman'
+      'users.name'
+    else
+      'created_at'
+    end
+  end
+  
+
+  def sort_direction
+    %w[asc desc].include?(params[:direction]) ? params[:direction] : "asc"
   end
 end

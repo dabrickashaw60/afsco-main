@@ -2,153 +2,294 @@
  * This is a manifest file that'll be compiled into application.css, which will include all the files
  * listed below.
  *
- * Any CSS (and SCSS, if configured) file within this directory, lib/assets/stylesheets, or any plugin's
- * vendor/assets/stylesheets directory can be referenced here using a relative path.
- *
- * You're free to add application-wide styles to this file and they'll appear at the bottom of the
- * compiled file so the styles you add here take precedence over styles defined in any other CSS
- * files in this directory. Styles in this file should be added after the last require_* statement.
- * It is generally better to create a new file per style scope.
- *
  *= require_tree .
  *= require_self
  *= require application.bootstrap
  */
+
  @import "bootstrap";
  @import "simple_calendar";
- @import "bootstrap";
  @import "leaflet";
+ 
+ // NAVBAR
+ .nav-link {
+   margin-right: 10px;
+ }
+ .navbar-brand img {
+   height: 60px !important;
+   width: auto !important;
+ }
+ .navbar {
+  margin-bottom: 10px;
+ }
+ 
+ // FOR LOGIN
+ .login-holder {
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   flex-direction: column;
+ }
+ .login-holder .actions {
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   flex-direction: column;
+ }
+ 
+ // CALENDAR STYLES
+ .calendar-navigation {
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   margin-bottom: 20px;
+ 
+   .nav-arrow, .btn-secondary, .btn-primary {
+     margin: 0 10px;
+   }
+ 
+   .current-week {
+     font-size: 18px;
+     font-weight: bold;
+     flex-grow: 1;
+     text-align: center;
+   }
+ }
+ 
+ .calendar {
+   display: flex;
+   flex-direction: column;
+   width: 100%;
+ 
+   .calendar-header,
+   .calendar-week {
+     display: flex;
+     width: 100%;
+     flex-wrap: wrap;
+   }
+ 
+   .calendar-day,
+   .calendar-crew-header,
+   .calendar-crew,
+   .calendar-day-block {
+     flex: 1 0 14.2857%; // Equal width for all columns
+     text-align: center;
+     border: 1px solid #ddd;
+     background-color: #f9f9f9;
+     padding: 5px;
+     box-sizing: border-box;
+   }
+   .calendar-day-block {
+     background-color: #fff;
+     min-height: 100px;
+     display: flex;
+     flex-direction: column;
+     justify-content: space-between;
+     height: 150px;
+     overflow: hidden;
+   }
+   .calendar-day-block::after{
+    content:  '';
+    flex-grow: 1;
+   }
+ 
+   .calendar-crew {
+     display: flex;
+     flex-direction: column;
+     align-items: center;
+     justify-content: center;
+   }
+ 
+   .today {
+     background-color: lightyellow;
+   }
+ 
+   .outside-month {
+     background-color: #f1f1f1;
+     color: #aaa;
+   }
+ 
+   .appointment {
+     background-color: #007bff;
+     color: #fff;
+     padding: 5px;
+     margin: 5px 0;
+     border-radius: 5px;
+     text-align: left;
+ 
+     strong {
+       display: block;
+       font-size: 14px;
+     }
+ 
+     p {
+       font-size: 12px;
+       margin: 0;
+     }
+   }
+ }
+ 
+ .job-sidebar {
+   padding: 20px;
+   background-color: #f9f9f9;
+   border: 1px solid #ddd;
+   border-radius: 5px;
+   margin-bottom: 20px;
+ 
+   .job {
+     margin-bottom: 15px;
+ 
+     strong {
+       display: block;
+       font-size: 16px;
+     }
+ 
+     p {
+       margin: 0;
+       font-size: 14px;
+     }
+   }
+ }
+ 
+ #job-selection-modal {
+   position: fixed;
+   top: 50%;
+   left: 50%;
+   transform: translate(-50%, -50%);
+   background-color: white;
+   padding: 20px;
+   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+   border-radius: 5px;
+   z-index: 1000;
+   width: 500px;
+   flex-direction: column;
+ 
+   select,
+   input,
+   button {
+     margin-bottom: 10px;
+   }
+ 
+   button {
+     width: 100px;
+     align-self: flex-end;
+   }
+ }
+ 
+ // Sidebar styling
+ .sidebar {
+   padding: 10px;
+   border-left: 1px solid #ddd;
+   height: 100%;
+ }
+ 
+ .sidebar p {
+   margin-bottom: 0;
+ }
+ 
+ .sidebar .appointment {
+   background-color: #e3f2fd;
+   border: 1px solid #90caf9;
+   border-radius: 4px;
+   padding: 5px;
+   margin-bottom: 10px;
+   font-size: 0.9em;
+ }
+ 
+ .sidebar ul {
+   list-style: none;
+   padding-left: 0;
+ }
+ 
+ .appointment {
+   padding: 5px;
+   box-shadow: 0px 0px 2px 0px;
+ }
+ 
+ .appointment p {
+   font-size: 10px;
+   margin-bottom: 0;
+ }
+ 
+ .appointment-details {
+   padding: 10px;
+   border: 1px solid #ddd;
+   margin-top: 10px;
+   background-color: #f9f9f9;
+ }
+ 
+ .app-holder {
+   box-shadow: 0px 0px 2px 0px;
+   padding: 5px;
+   margin-bottom: 5px;
+ }
+ 
+ // FOR ALERTS
+ .alert {
+   padding: 15px;
+   margin-bottom: 20px;
+   border: 1px solid transparent;
+   border-radius: 4px;
+ }
+ 
+ .alert-danger {
+   color: #a94442;
+   background-color: #f2dede;
+   border-color: #ebccd1;
+ }
+ 
+ .alert-info {
+   color: #31708f;
+   background-color: #d9edf7;
+   border-color: #bce8f1;
+ }
 
-// NAVBAR
-.nav-link {
+ #new-appointment-modal {
+  position: fixed;
+  z-index: 9999;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-content {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 5px;
+  width: 500px;
+  position: relative;
+}
+
+.close-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 24px;
+  cursor: pointer;
+} 
+
+.form-inline .form-control {
+  width: 400px;
+}
+
+.form-inline .form-group, 
+.form-inline .btn {
   margin-right: 10px;
 }
-.navbar-brand img{
-  height: 100px !important;
-  width: auto !important;
-}
 
-// FOR LOGIN
-.login-holder{
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
+.table .btn-group .btn {
+  min-width: 70px; /* Optional: Ensures buttons have consistent width */
 }
-.login-holder .actions{
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
+.form-inline #search-field{
+  float: left;
+  margin-right: 10px;
 }
-
-// CALENDAR STYLES 
-
- .calendar-navigation {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
+.form-inline .btn-primary .btn-secondary{
+  float: left;
 }
-.calendar .today{
-  background: rgba(255, 241, 163, 0.219);
-}
-.calendar-header,
-.calendar-week {
-  display: flex;
-}
-
-.calendar-day {
-  flex: 1;
-  text-align: center;
-  font-weight: bold;
-  border-bottom: 1px solid #ddd;
-}
-
-.calendar-day-block {
-  flex: 1;
-  height: 150px;
-  padding: 5px;
-  border: 1px solid #ddd;
-  position: relative;
-  overflow-y: scroll;
-}
-
-.calendar-day-block.weekly {
-  height: 1000px; // Height for weekly view
-}
-
-.calendar-day-number {
-  top: 5px;
-  left: 5px;
-  font-weight: bold;
-}
-
-.outside-month {
-  background-color: #ececec;
-}
-
-// Sidebar styling
-.sidebar {
-  padding: 10px;
-  border-left: 1px solid #ddd;
-  height: 100%;
-}
-.sidebar p{
-  margin-bottom: 0;
-}
-.sidebar .appointment {
-  background-color: #e3f2fd;
-  border: 1px solid #90caf9;
-  border-radius: 4px;
-  padding: 5px;
-  margin-bottom: 10px;
-  font-size: 0.9em;
-}
-.sidebar ul{
-  list-style: none;
-  padding-left: 0;
-}
-.appointment{
-  padding: 5px;
-  box-shadow: 0px 0px 2px 0px;
-}
-.appointment p{
-  font-size: 10px;
-  margin-bottom: 0;
-}
-.appointment-details {
-  padding: 10px;
-  border: 1px solid #ddd;
-  margin-top: 10px;
-  background-color: #f9f9f9;
-}
-.app-holder{
-  box-shadow: 0px 0px 2px 0px;
-  padding: 5px;
-  margin-bottom: 5px;
-}
-
-
-
-//FOR ALERTS
-
-.alert {
-  padding: 15px;
-  margin-bottom: 20px;
-  border: 1px solid transparent;
-  border-radius: 4px;
-}
-
-.alert-danger {
-  color: #a94442;
-  background-color: #f2dede;
-  border-color: #ebccd1;
-}
-
-.alert-info {
-  color: #31708f;
-  background-color: #d9edf7;
-  border-color: #bce8f1;
-}
-

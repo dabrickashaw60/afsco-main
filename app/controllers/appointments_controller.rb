@@ -23,9 +23,10 @@ def create
   if @appointment.save
     redirect_to root_path, notice: 'Appointment was successfully created.'
   else
-    render :new
+    render :new, status: :unprocessable_entity
   end
 end
+
 
 def destroy
   if @appointment.present? && @appointment.user == current_user
@@ -39,7 +40,7 @@ end
   private
 
   def appointment_params
-    params.require(:appointment).permit(:title, :location, :start_time, :end_time)
+    params.require(:appointment).permit(:title, :location, :start_time, :end_time, :user_id)
   end
 
   def authorize_user!

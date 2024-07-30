@@ -27,7 +27,10 @@
           <div class="calendar-week">
             <div class="calendar-crew">
               <% if row_index < @crews.length %>
-                <%= @crews[row_index].name %>
+                <strong><%= @crews[row_index].name %></strong>
+                 <h3>&</h3> 
+                  <p><%= @crews[row_index].laborer1&.name %></p>
+                 <p><%= @crews[row_index].laborer2&.name %></p>
               <% else %>
                 No Crew
               <% end %>
@@ -56,18 +59,32 @@
     </div>
   </div>
   
-  <div class="col-md-3">
-    <div class="job-sidebar">
-      <h3>Jobs</h3>
-      <% @jobs.where(installed: false).each do |job| %>
-        <div class="job">
-          <strong><%= job.job_number %></strong>
-          <p><%= job.customer_name %></p>
-          <p>Salesman: <%= job.salesman.name %></p>
-        </div>
-      <% end %>
-    </div>
+<div class="col-md-3">
+  <div class="job-sidebar">
+    <h3>Scheduled Jobs</h3>
+    <% @jobs.where.not(crew: nil).each do |job| %> <!-- Jobs with a crew assigned -->
+      <div class="job">
+        <strong><%= job.job_number %></strong>
+        <p><%= job.customer_name %></p>
+        <p>Salesman: <%= job.salesman.name %></p>
+        <p>Crew: <%= job.crew.name %> - Start Date: <%= job.install_start_date %></p>
+
+      </div>
+    <% end %>
   </div>
+
+  <div class="job-sidebar">
+    <h3>Not Scheduled Jobs</h3>
+    <% @jobs.where(crew: nil).each do |job| %> <!-- Jobs without a crew assigned -->
+      <div class="job">
+        <strong><%= job.job_number %></strong>
+        <p><%= job.customer_name %></p>
+        <p>Salesman: <%= job.salesman.name %></p>
+      </div>
+    <% end %>
+  </div>
+</div>
+
 
   <!-- Job Selection Modal -->
   <div id="job-selection-modal" style="display:none;">
@@ -93,59 +110,26 @@
     <button onclick="closeJobSelectionModal()" style="float:right;">Cancel</button>
   </div>
 
-  <style>
-    .calendar-navigation {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-    }
+<style>
 
-    .calendar-header, .calendar-week {
-      display: flex;
-    }
-
-    .calendar-day, .calendar-crew-header, .calendar-crew {
+ .calendar-crew {
       width: 100px;
       text-align: center;
       border: 1px solid #ddd;
       background-color: #f9f9f9;
       padding: 5px;
     }
-
-    .calendar-day-block {
-      width: 100px;
-      text-align: center;
-      border: 1px solid #ddd;
-      background-color: #fff;
-      padding: 5px;
+    .calendar-crew p{
+      font-size: 8px;
+      margin-bottom: 0;
+    }
+    .calendar-crew h3{
+      font-size: 12px;
+      margin: 0;
     }
 
-    .today {
-      background-color: lightyellow;
-    }
 
-    .job-sidebar {
-      padding: 20px;
-      background-color: #f9f9f9;
-      border: 1px solid #ddd;
-      border-radius: 5px;
-    }
-
-    #job-selection-modal {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background-color: white;
-      padding: 20px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-      border-radius: 5px;
-      z-index: 1000;
-      width: 500px;
-      flex-direction: column;
-    }
-  </style>
+  </style> 
 </div>
 
 <script>

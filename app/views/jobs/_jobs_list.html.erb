@@ -1,0 +1,24 @@
+<% @jobs.each do |job| %>
+  <tr>
+    <td><%= job.job_number %></td>
+    <td><%= job.salesman.name %></td>
+    <td><%= job.customer_name %></td>
+    <td><%= job.address %></td>
+    <td><%= job.customer_phone %></td>
+    <td><%= job.customer_email %></td>
+    <td><%= number_to_currency(job.total_amount) %></td>
+    <td><%= job.type_of_work %></td>
+    <td><%= job.created_at.strftime("%m/%d/%Y") %></td>
+        <td>
+          <div class="btn-group" role="group">
+            <%= link_to 'Show', job, class: 'btn btn-outline-primary' %>
+            <%= link_to 'Edit', edit_job_path(job), class: 'btn btn-outline-primary' %>
+            <% if job.salesman == current_user %>
+              <%= form_with(url: job_path(job), method: :delete, local: true, class: 'd-inline') do %>
+                <%= submit_tag 'Delete', data: { confirm: 'Are you sure?' }, class: 'btn btn-outline-danger' %>
+              <% end %>
+            <% end %>
+          </div>
+        </td>
+  </tr>
+<% end %>
