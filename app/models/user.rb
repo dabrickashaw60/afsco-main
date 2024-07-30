@@ -4,7 +4,7 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
 
-  enum role: { super_admin: 'super_admin', salesman: 'salesman', installer: 'installer' }
+  enum role: { super_admin: 'super_admin', admin: 'admin', salesman: 'salesman', installer: 'installer' }
 
   validates :name, presence: true
   validates :role, presence: true, inclusion: { in: roles.keys }
@@ -35,6 +35,10 @@ class User < ApplicationRecord
 
   def super_admin?
     role == 'super_admin'
+  end
+
+  def admin?
+    role == 'admin'
   end
 
   private

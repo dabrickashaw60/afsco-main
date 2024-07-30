@@ -7,7 +7,7 @@
       </div>
       <%= link_to '>', installer_calendar_path(week: (@current_week == 52 ? 1 : @current_week + 1), year: (@current_week == 52 ? @current_year + 1 : @current_year)), class: 'nav-arrow' %>
       <%= link_to 'Back to Appointments Calendar', root_path, class: 'btn btn-secondary' %>
-      <% if current_user.super_admin? %>
+      <% if current_user.super_admin? || current_user.admin? %>
         <button onclick="openJobSelectionModal()" class="btn btn-primary" style="margin-left: 10px;">Assign Job</button>
       <% end %>
     </div>
