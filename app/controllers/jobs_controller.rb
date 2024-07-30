@@ -8,8 +8,10 @@ class JobsController < ApplicationController
     @jobs = Job.all
 
     if params[:search].present?
-      @jobs = @jobs.joins(:salesman).where("job_number LIKE ? OR customer_name LIKE ? OR users.name LIKE ?", 
-                        "%#{params[:search]}%", "%#{params[:search]}%", "%#{params[:search]}%")
+      @jobs = @jobs.joins(:salesman).where(
+        "job_number ILIKE :search OR customer_name ILIKE :search OR users.name ILIKE :search OR address ILIKE :search OR city ILIKE :search OR state ILIKE :search OR country ILIKE :search OR type_of_work ILIKE :search", 
+        search: "%#{params[:search]}%"
+      )
     end
 
     if params[:sort] == 'salesman'
