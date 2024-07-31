@@ -5,9 +5,9 @@
 <table class="table">
   <thead>
     <tr>
-      <th>Name</th>
-      <th>Email</th>
-      <th>Role</th>
+      <th><%= link_to 'Name', admin_users_path(sort: 'name') %></th>
+      <th><%= link_to 'Email', admin_users_path(sort: 'email') %></th>
+      <th><%= link_to 'Role', admin_users_path(sort: 'role') %></th>
       <th>Actions</th>
     </tr>
   </thead>

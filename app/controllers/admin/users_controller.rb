@@ -1,9 +1,9 @@
 class Admin::UsersController < ApplicationController
   before_action :authenticate_user!
-  before_action :authorize_super_admin
+  before_action :authorize_super_admin, except: [:index]
 
   def index
-    @users = User.all
+    @users = User.order(params[:sort] || :role)
   end
 
   def new
