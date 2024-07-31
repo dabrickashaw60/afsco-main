@@ -273,6 +273,36 @@
   margin-top: 25px;
 }
 
+// STYLES FOR INSTALLER CALENDAR JOB POP UP
+#jobModal {
+  .modal-dialog{
+    max-width: 80%;
+    height: auto;
+  }
+  .modal-content {
+  background-color: #cccccc;
+  padding: 20px;
+  border-radius: 5px;
+  width: 100%;
+  height: 100%;
+  position: relative;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 25px;
+  box-shadow: 2px 2px 5px 5px rgb(65, 65, 65);
+}
+#job-details{
+
+}
+  #job-deets{
+    float: left;
+  }
+  #job-attach{
+    float: left;
+    height: 800px;
+    position: relative;
+  }
+}
 .close-button {
   position: absolute;
   top: 10px;
