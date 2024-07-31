@@ -23,17 +23,23 @@ class Job < ApplicationRecord
   # })
   # end
   def as_json(options = {})
-  super(options).merge({
-    job_number: job_number,
-    customer_name: customer_name,
-    address: address,
-    customer_phone: customer_phone,
-    customer_email: customer_email,
-    total_amount: total_amount,
-    type_of_work: type_of_work,
-    files: files.map { |file| Rails.application.routes.url_helpers.rails_blob_url(file, host: 'localhost', port: 3000) }
-  })
-end
+    super(options).merge({
+      job_number: job_number,
+      salesman_id: salesman_id,
+      customer_name: customer_name,
+      address: address,
+      customer_phone: customer_phone,
+      customer_email: customer_email,
+      total_amount: total_amount,
+      type_of_work: type_of_work,
+      installed: installed,
+      crew: crew&.name,
+      install_date: install_date,
+      install_start_date: install_start_date,
+      install_end_date: install_end_date,
+      files: files.map { |file| { filename: file.filename.to_s, url: Rails.application.routes.url_helpers.rails_blob_url(file, only_path: true) } }
+    })
+  end
 
   private
 

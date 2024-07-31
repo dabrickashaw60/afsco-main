@@ -46,8 +46,8 @@
                     <div class="job-details" data-job-id="<%= assignment.job.id %>">
                       <%= assignment.job.customer_name %> - <%= assignment.job.address %>
                       <br>
-                      <button onclick="unassignJob('<%= assignment.id %>')" class="btn btn-primary btn-sm">Unassign</button>
                     </div>
+                                          <button onclick="unassignJob('<%= assignment.id %>')" class="btn btn-primary btn-sm">Unassign</button>
                   <% else %>
                     No Job
                   <% end %>
@@ -210,45 +210,21 @@
       }
     });
   }
-  
-  // document.addEventListener('turbo:load', function() {
-  //   // Add event listener for job details click
-  //   document.querySelectorAll('.job-details').forEach(function(element) {
-  //     element.addEventListener('click', function() {
-  //       var jobId = this.dataset.jobId;
-  //       fetch(`/jobs/${jobId}.json`)
-  //         .then(response => response.json())
-  //         .then(data => {
-  //           var jobDetails = `
-  //             <p><strong>Job Number:</strong> ${data.job_number}</p>
-  //             <p><strong>Customer Name:</strong> ${data.customer_name}</p>
-  //             <p><strong>Address:</strong> ${data.address}</p>
-  //             <p><strong>Customer Phone:</strong> ${data.customer_phone}</p>
-  //             <p><strong>Customer Email:</strong> ${data.customer_email}</p>
-  //             <p><strong>Total Amount:</strong> $${data.total_amount}</p>
-  //             <p><strong>Type of Work:</strong> ${data.type_of_work}</p>
-  //           <ul>
-  //             ${data.files.map(file => `<li><a href="${file.url}" target="_blank">${file.filename}</a></li>`).join('')}
-  //           </ul>
-  //           `;
-  //           document.getElementById('job-details').innerHTML = jobDetails;
-  //           document.getElementById('jobModal').style.display = 'block';
-  //         });
-  //     });
-  //   });
-  // });
 
-  // function closeJobModal() {
-  //   document.getElementById('jobModal').style.display = 'none';
-  // }
-
-  document.addEventListener('turbo:load', function() {
+document.addEventListener('turbo:load', function() {
+  // Add event listener for job details click
   document.querySelectorAll('.job-details').forEach(function(element) {
     element.addEventListener('click', function() {
       var jobId = this.dataset.jobId;
       fetch(`/jobs/${jobId}.json`)
-        .then(response => response.json())
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          return response.json();
+        })
         .then(data => {
+          console.log('Received job data:', data); // Log the entire job data
           var jobDetails = `
             <p><strong>Job Number:</strong> ${data.job_number}</p>
             <p><strong>Customer Name:</strong> ${data.customer_name}</p>
@@ -257,23 +233,36 @@
             <p><strong>Customer Email:</strong> ${data.customer_email}</p>
             <p><strong>Total Amount:</strong> $${data.total_amount}</p>
             <p><strong>Type of Work:</strong> ${data.type_of_work}</p>
-            <h4>Attachments:</h4>
+            <p><strong>Installed?</strong> ${data.installed}</p>
+            <p><strong>Install By:</strong> ${data.crew ? data.crew.name : 'N/A'}</p>
+            <p><strong>Install Date:</strong> ${data.install_date}</p>
+            <p><strong>Install Start Date:</strong> ${data.install_start_date}</p>
+            <p><strong>Install End Date:</strong> ${data.install_end_date}</p>
+            <div><strong>Attachments:</strong></div>
+            <div>
+              ${data.files.map(file => {
+                console.log('Processing file:', file); // Log each file being processed
+                if (!file || !file.url) {
+                  return '<p>File data missing or corrupt.</p>';
+                }
+                const fileType = file.url.split('.').pop().toLowerCase();
+                if (['jpg', 'jpeg', 'png', 'gif'].includes(fileType)) {
+                  return `<img src="${file.url}" alt="${file.filename || 'Image'}" style="max-width: 100%; margin-bottom: 10px;">`;
+                } else if (fileType === 'pdf') {
+                  return `<embed src="${file.url}" width="100%" height="500px" type="application/pdf">`;
+                } else {
+                  return `<a href="${file.url}" target="_blank">${file.filename || 'File'}</a>`;
+                }
+              }).join('') || '<p>No attachments available.</p>'}
+            </div>
           `;
-
-          if (data.files && data.files.length > 0) {
-            jobDetails += '<ul>';
-            data.files.forEach(function(fileUrl) {
-              jobDetails += `<li><a href="${fileUrl}" target="_blank">${fileUrl.split('/').pop()}</a></li>`;
-            });
-            jobDetails += '</ul>';
-          } else {
-            jobDetails += '<p>No attachments available.</p>';
-          }
-
           document.getElementById('job-details').innerHTML = jobDetails;
           document.getElementById('jobModal').style.display = 'block';
         })
-        .catch(error => console.error('Error:', error));
+        .catch(error => {
+          console.error('Error fetching job details:', error);
+          alert('An error occurred while fetching job details.');
+        });
     });
   });
 });
@@ -281,5 +270,7 @@
 function closeJobModal() {
   document.getElementById('jobModal').style.display = 'none';
 }
+
+
 
 </script>
