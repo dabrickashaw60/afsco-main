@@ -141,6 +141,9 @@
       font-size: 12px;
       margin: 0;
     }
+    .job-details {
+      cursor: pointer;
+    }
   </style> 
 </div>
 
@@ -208,31 +211,75 @@
     });
   }
   
+  // document.addEventListener('turbo:load', function() {
+  //   // Add event listener for job details click
+  //   document.querySelectorAll('.job-details').forEach(function(element) {
+  //     element.addEventListener('click', function() {
+  //       var jobId = this.dataset.jobId;
+  //       fetch(`/jobs/${jobId}.json`)
+  //         .then(response => response.json())
+  //         .then(data => {
+  //           var jobDetails = `
+  //             <p><strong>Job Number:</strong> ${data.job_number}</p>
+  //             <p><strong>Customer Name:</strong> ${data.customer_name}</p>
+  //             <p><strong>Address:</strong> ${data.address}</p>
+  //             <p><strong>Customer Phone:</strong> ${data.customer_phone}</p>
+  //             <p><strong>Customer Email:</strong> ${data.customer_email}</p>
+  //             <p><strong>Total Amount:</strong> $${data.total_amount}</p>
+  //             <p><strong>Type of Work:</strong> ${data.type_of_work}</p>
+  //           <ul>
+  //             ${data.files.map(file => `<li><a href="${file.url}" target="_blank">${file.filename}</a></li>`).join('')}
+  //           </ul>
+  //           `;
+  //           document.getElementById('job-details').innerHTML = jobDetails;
+  //           document.getElementById('jobModal').style.display = 'block';
+  //         });
+  //     });
+  //   });
+  // });
+
+  // function closeJobModal() {
+  //   document.getElementById('jobModal').style.display = 'none';
+  // }
+
   document.addEventListener('turbo:load', function() {
-    // Add event listener for job details click
-    document.querySelectorAll('.job-details').forEach(function(element) {
-      element.addEventListener('click', function() {
-        var jobId = this.dataset.jobId;
-        fetch(`/jobs/${jobId}.json`)
-          .then(response => response.json())
-          .then(data => {
-            var jobDetails = `
-              <p><strong>Job Number:</strong> ${data.job_number}</p>
-              <p><strong>Customer Name:</strong> ${data.customer_name}</p>
-              <p><strong>Address:</strong> ${data.address}</p>
-              <p><strong>Customer Phone:</strong> ${data.customer_phone}</p>
-              <p><strong>Customer Email:</strong> ${data.customer_email}</p>
-              <p><strong>Total Amount:</strong> $${data.total_amount}</p>
-              <p><strong>Type of Work:</strong> ${data.type_of_work}</p>
-            `;
-            document.getElementById('job-details').innerHTML = jobDetails;
-            document.getElementById('jobModal').style.display = 'block';
-          });
-      });
+  document.querySelectorAll('.job-details').forEach(function(element) {
+    element.addEventListener('click', function() {
+      var jobId = this.dataset.jobId;
+      fetch(`/jobs/${jobId}.json`)
+        .then(response => response.json())
+        .then(data => {
+          var jobDetails = `
+            <p><strong>Job Number:</strong> ${data.job_number}</p>
+            <p><strong>Customer Name:</strong> ${data.customer_name}</p>
+            <p><strong>Address:</strong> ${data.address}</p>
+            <p><strong>Customer Phone:</strong> ${data.customer_phone}</p>
+            <p><strong>Customer Email:</strong> ${data.customer_email}</p>
+            <p><strong>Total Amount:</strong> $${data.total_amount}</p>
+            <p><strong>Type of Work:</strong> ${data.type_of_work}</p>
+            <h4>Attachments:</h4>
+          `;
+
+          if (data.files && data.files.length > 0) {
+            jobDetails += '<ul>';
+            data.files.forEach(function(fileUrl) {
+              jobDetails += `<li><a href="${fileUrl}" target="_blank">${fileUrl.split('/').pop()}</a></li>`;
+            });
+            jobDetails += '</ul>';
+          } else {
+            jobDetails += '<p>No attachments available.</p>';
+          }
+
+          document.getElementById('job-details').innerHTML = jobDetails;
+          document.getElementById('jobModal').style.display = 'block';
+        })
+        .catch(error => console.error('Error:', error));
     });
   });
+});
 
-  function closeJobModal() {
-    document.getElementById('jobModal').style.display = 'none';
-  }
+function closeJobModal() {
+  document.getElementById('jobModal').style.display = 'none';
+}
+
 </script>

@@ -21,3 +21,28 @@
   <%= form.submit "Delete", data: { confirm: 'Are you sure?' }, class: 'btn btn-danger'  %>
   <%end%>
 <% end %>
+
+<h2>Attachments</h2>
+<% if @job.files.attached? %>
+  <ul>
+    <% @job.files.each do |file| %>
+      <li>
+        <%= link_to file.filename, url_for(file), target: "_blank" %>
+        <%= link_to 'Delete', delete_file_attachment_job_path(@job, file.id), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger btn-sm' %>
+      </li>
+    <% end %>
+  </ul>
+<% else %>
+  <p>No attachments available.</p>
+<% end %>
+
+<h3>Add New Attachment</h3>
+<%= form_with(url: add_file_attachment_job_path(@job), method: :post, local: true, multipart: true) do |form| %>
+  <div class="form-group">
+    <%= form.label :files, "Upload File" %>
+    <%= form.file_field :files, multiple: true, class: 'form-control' %>
+  </div>
+  <%= form.submit "Upload", class: 'btn btn-primary' %>
+<% end %>
+
+

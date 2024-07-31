@@ -27,8 +27,8 @@ class JobsController < ApplicationController
   end
   def show
     respond_to do |format|
-      format.html # default HTML response
-      format.json { render json: @job } # JSON response
+      format.html # Redirect or render HTML as needed
+      format.json { render json: @job }
     end
   end
   
@@ -104,6 +104,27 @@ class JobsController < ApplicationController
     end
   end
 
+  def add_file_attachment
+    @job = Job.find(params[:id])
+    if params[:files].present?
+      params[:files].reject(&:blank?).each do |file|
+        @job.files.attach(file)
+      end
+      redirect_to @job, notice: 'File was successfully uploaded.'
+    else
+      redirect_to @job, alert: 'No file selected or upload failed.'
+    end
+  end
+  
+  
+  
+  def delete_file_attachment
+    @job = Job.find(params[:id])
+    file = @job.files.find(params[:file_id])
+    file.purge
+    redirect_to @job, notice: 'File successfully deleted.'
+  end
+
   private
 
   def set_job
@@ -111,7 +132,7 @@ class JobsController < ApplicationController
   end
 
   def job_params
-    params.require(:job).permit(:job_number, :customer_name, :address, :customer_phone, :customer_email, :total_amount, :type_of_work, :salesman_id, :city, :state, :country, :crew_id)
+    params.require(:job).permit(:job_number, :customer_name, :address, :customer_phone, :customer_email, :total_amount, :type_of_work, :salesman_id, :city, :state, :country, :crew_id, files: [])
   end
 
   def authorize_user!
@@ -133,7 +154,6 @@ class JobsController < ApplicationController
     end
   end
   
-
   def sort_direction
     %w[asc desc].include?(params[:direction]) ? params[:direction] : "asc"
   end

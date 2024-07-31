@@ -2,6 +2,7 @@ class Job < ApplicationRecord
   belongs_to :salesman, class_name: 'User'
   belongs_to :crew, optional: true
   has_many :assignments, dependent: :destroy
+  has_many_attached :files
 
   geocoded_by :full_address
   after_validation :geocode, if: :will_save_change_to_address?
@@ -15,6 +16,24 @@ class Job < ApplicationRecord
   def full_address
     [address, city, state, country].compact.join(', ')
   end
+
+  # def as_json(options = {})
+  # super(options).merge({
+  #   files: self.files.map { |file| Rails.application.routes.url_helpers.rails_blob_url(file, host: 'localhost', port: 3000) }
+  # })
+  # end
+  def as_json(options = {})
+  super(options).merge({
+    job_number: job_number,
+    customer_name: customer_name,
+    address: address,
+    customer_phone: customer_phone,
+    customer_email: customer_email,
+    total_amount: total_amount,
+    type_of_work: type_of_work,
+    files: files.map { |file| Rails.application.routes.url_helpers.rails_blob_url(file, host: 'localhost', port: 3000) }
+  })
+end
 
   private
 
