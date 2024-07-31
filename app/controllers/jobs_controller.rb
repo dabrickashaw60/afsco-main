@@ -26,7 +26,12 @@ class JobsController < ApplicationController
     end
   end
   def show
+    respond_to do |format|
+      format.html # default HTML response
+      format.json { render json: @job } # JSON response
+    end
   end
+  
 
   def new
     @job = Job.new

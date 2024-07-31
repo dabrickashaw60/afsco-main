@@ -43,9 +43,10 @@
                   <% crew = @crews[row_index] %>
                   <% assignment = Assignment.find_by(crew_id: crew.id, date: day) %>
                   <% if assignment %>
-                    <div>
+                    <div class="job-details" data-job-id="<%= assignment.job.id %>">
                       <%= assignment.job.customer_name %> - <%= assignment.job.address %>
-                      <button onclick="unassignJob('<%= assignment.id %>')">Unassign</button>
+                      <br>
+                      <button onclick="unassignJob('<%= assignment.id %>')" class="btn btn-primary btn-sm">Unassign</button>
                     </div>
                   <% else %>
                     No Job
@@ -58,33 +59,47 @@
       </div>
     </div>
   </div>
+
+  <div class="modal" id="jobModal" tabindex="-1" role="dialog" aria-labelledby="jobModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="jobModalLabel">Job Details</h5>
+          <button type="button" class="close" aria-label="Close" onclick="closeJobModal()">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body" id="job-details">
+          <!-- Job details will be dynamically loaded here -->
+        </div>
+      </div>
+    </div>
+  </div>
   
-<div class="col-md-3">
-  <div class="job-sidebar">
-    <h3>Scheduled Jobs</h3>
-    <% @jobs.where.not(crew: nil).each do |job| %> <!-- Jobs with a crew assigned -->
-      <div class="job">
-        <strong><%= job.job_number %></strong>
-        <p><%= job.customer_name %></p>
-        <p>Salesman: <%= job.salesman.name %></p>
-        <p>Crew: <%= job.crew.name %> - Start Date: <%= job.install_start_date %></p>
+  <div class="col-md-3">
+    <div class="job-sidebar">
+      <h3>Scheduled Jobs</h3>
+      <% @jobs.where.not(crew: nil).each do |job| %> <!-- Jobs with a crew assigned -->
+        <div class="job">
+          <strong><%= job.job_number %></strong>
+          <p><%= job.customer_name %></p>
+          <p>Salesman: <%= job.salesman.name %></p>
+          <p>Crew: <%= job.crew.name %> - Start Date: <%= job.install_start_date %></p>
+        </div>
+      <% end %>
+    </div>
 
-      </div>
-    <% end %>
+    <div class="job-sidebar">
+      <h3>Not Scheduled Jobs</h3>
+      <% @jobs.where(crew: nil).each do |job| %> <!-- Jobs without a crew assigned -->
+        <div class="job">
+          <strong><%= job.job_number %></strong>
+          <p><%= job.customer_name %></p>
+          <p>Salesman: <%= job.salesman.name %></p>
+        </div>
+      <% end %>
+    </div>
   </div>
-
-  <div class="job-sidebar">
-    <h3>Not Scheduled Jobs</h3>
-    <% @jobs.where(crew: nil).each do |job| %> <!-- Jobs without a crew assigned -->
-      <div class="job">
-        <strong><%= job.job_number %></strong>
-        <p><%= job.customer_name %></p>
-        <p>Salesman: <%= job.salesman.name %></p>
-      </div>
-    <% end %>
-  </div>
-</div>
-
 
   <!-- Job Selection Modal -->
   <div id="job-selection-modal" style="display:none;">
@@ -110,9 +125,8 @@
     <button onclick="closeJobSelectionModal()" style="float:right;">Cancel</button>
   </div>
 
-<style>
-
- .calendar-crew {
+  <style>
+    .calendar-crew {
       width: 100px;
       text-align: center;
       border: 1px solid #ddd;
@@ -127,8 +141,6 @@
       font-size: 12px;
       margin: 0;
     }
-
-
   </style> 
 </div>
 
@@ -147,37 +159,37 @@
     document.getElementById('job-selection-modal').style.display = 'none';
   }
 
-function assignJobToDate() {
-  var jobId = document.getElementById('job-select').value;
-  var startDate = document.getElementById('start-date').value;
-  var endDate = document.getElementById('end-date').value;
-  var crewId = document.getElementById('crew-select').value;
+  function assignJobToDate() {
+    var jobId = document.getElementById('job-select').value;
+    var startDate = document.getElementById('start-date').value;
+    var endDate = document.getElementById('end-date').value;
+    var crewId = document.getElementById('crew-select').value;
 
-  if (!crewId) {
-    alert('Please select a crew.');
-    return;
-  }
-
-  fetch('<%= assign_job_path %>', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-CSRF-Token': '<%= form_authenticity_token %>'
-    },
-    body: JSON.stringify({ job_id: jobId, start_date: startDate, end_date: endDate, crew_id: crewId })
-  }).then(response => {
-    if (response.ok) {
-      window.location.reload();
-    } else {
-      response.json().then(data => {
-        alert('Error assigning job: ' + (data.message || 'Unknown error'));
-      });
+    if (!crewId) {
+      alert('Please select a crew.');
+      return;
     }
-  }).catch(error => {
-    console.error('Fetch error:', error);
-    alert('Error assigning job: ' + error.message);
-  });
-}
+
+    fetch('<%= assign_job_path %>', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRF-Token': '<%= form_authenticity_token %>'
+      },
+      body: JSON.stringify({ job_id: jobId, start_date: startDate, end_date: endDate, crew_id: crewId })
+    }).then(response => {
+      if (response.ok) {
+        window.location.reload();
+      } else {
+        response.json().then(data => {
+          alert('Error assigning job: ' + (data.message || 'Unknown error'));
+        });
+      }
+    }).catch(error => {
+      console.error('Fetch error:', error);
+      alert('Error assigning job: ' + error.message);
+    });
+  }
 
   function unassignJob(assignmentId) {
     fetch('<%= unassign_job_path %>', {
@@ -194,5 +206,33 @@ function assignJobToDate() {
         alert('Error unassigning job.');
       }
     });
+  }
+  
+  document.addEventListener('turbo:load', function() {
+    // Add event listener for job details click
+    document.querySelectorAll('.job-details').forEach(function(element) {
+      element.addEventListener('click', function() {
+        var jobId = this.dataset.jobId;
+        fetch(`/jobs/${jobId}.json`)
+          .then(response => response.json())
+          .then(data => {
+            var jobDetails = `
+              <p><strong>Job Number:</strong> ${data.job_number}</p>
+              <p><strong>Customer Name:</strong> ${data.customer_name}</p>
+              <p><strong>Address:</strong> ${data.address}</p>
+              <p><strong>Customer Phone:</strong> ${data.customer_phone}</p>
+              <p><strong>Customer Email:</strong> ${data.customer_email}</p>
+              <p><strong>Total Amount:</strong> $${data.total_amount}</p>
+              <p><strong>Type of Work:</strong> ${data.type_of_work}</p>
+            `;
+            document.getElementById('job-details').innerHTML = jobDetails;
+            document.getElementById('jobModal').style.display = 'block';
+          });
+      });
+    });
+  });
+
+  function closeJobModal() {
+    document.getElementById('jobModal').style.display = 'none';
   }
 </script>
