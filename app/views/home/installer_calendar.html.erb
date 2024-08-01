@@ -44,10 +44,10 @@
                   <% assignment = Assignment.find_by(crew_id: crew.id, date: day) %>
                   <% if assignment %>
                     <div class="job-details" data-job-id="<%= assignment.job.id %>">
-                      <%= assignment.job.customer_name %> - <%= assignment.job.address %>
+                      <%= assignment.job.job_number %> <br> <%= assignment.job.customer_name %> 
                       <br>
                     </div>
-                                          <button onclick="unassignJob('<%= assignment.id %>')" class="btn btn-primary btn-sm">Unassign</button>
+                    <button onclick="unassignJob('<%= assignment.id %>')" class="btn btn-primary btn-sm">Unassign</button>
                   <% else %>
                     No Job
                   <% end %>
