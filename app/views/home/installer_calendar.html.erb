@@ -60,6 +60,7 @@
     </div>
   </div>
 
+<div id="overlay" class="overlay"></div>
   <div class="modal" id="jobModal" tabindex="-1" role="dialog" aria-labelledby="jobModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
@@ -242,7 +243,7 @@ document.addEventListener('turbo:load', function() {
           </div>
           <div class="col-md-12" id="job-attach">
             <div id="attachments-carousel" class="carousel">
-              ${data.files.map((file, index) => {
+              ${data.files && data.files.length ? data.files.map((file, index) => {
                 if (!file || !file.url) {
                   return '<p>File data missing or corrupt.</p>';
                 }
@@ -253,7 +254,7 @@ document.addEventListener('turbo:load', function() {
                   fileType === 'pdf' ? `<embed src="${file.url}" width="100%" height="100%" type="application/pdf">` : 
                   `<a href="${file.url}" target="_blank">${file.filename || 'File'}</a>`}
                 </div>`;
-              }).join('') || '<p>No attachments available.</p>'}
+              }).join('') : '<p>No attachments available.</p>'}
             </div>
             <button class="carousel-control-prev" type="button" onclick="prevSlide()">&#10094;</button>
             <button class="carousel-control-next" type="button" onclick="nextSlide()">&#10095;</button>
@@ -261,6 +262,8 @@ document.addEventListener('turbo:load', function() {
           `;
           document.getElementById('job-details').innerHTML = jobDetails;
           document.getElementById('jobModal').style.display = 'block';
+          document.getElementById('overlay').style.display = 'block';
+
           initCarousel();
         })
         .catch(error => {
@@ -274,7 +277,10 @@ document.addEventListener('turbo:load', function() {
 let currentSlide = 0;
 
 function initCarousel() {
-  showSlide(currentSlide);
+  const slides = document.querySelectorAll('#attachments-carousel .carousel-item');
+  if (slides.length > 0) {
+    showSlide(currentSlide);
+  }
 }
 
 function showSlide(index) {
@@ -294,11 +300,11 @@ function prevSlide() {
   showSlide(--currentSlide);
 }
 
-
-
 function closeJobModal() {
   document.getElementById('jobModal').style.display = 'none';
+  document.getElementById('overlay').style.display = 'none';
 }
+
 
 
 

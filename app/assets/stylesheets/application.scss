@@ -150,7 +150,7 @@
      }
    }
  }
- 
+
  #job-selection-modal {
    position: fixed;
    top: 50%;
@@ -274,13 +274,26 @@
 }
 
 // STYLES FOR INSTALLER CALENDAR JOB POP UP
+.overlay{
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); 
+  display: none; 
+  z-index: 1040; 
+ }
+ .modal{
+  z-index: 1050;
+ }
 #jobModal {
   .modal-dialog{
     max-width: 80%;
     height: auto;
   }
   .modal-content {
-  background-color: #cccccc;
+  background-color: whitesmoke;
   padding: 20px;
   border-radius: 5px;
   width: 100%;
@@ -301,6 +314,18 @@
     float: left;
     height: 800px;
     position: relative;
+  }
+  .modal-header .close{
+    position: absolute;
+    right: 25px;
+    background: none;
+    border-color: #45ad4e;
+    color: #45ad4e;
+    border-radius: 2em;
+    box-shadow: 0px 0px 4px 2px #8888;
+    height: 40px;
+    width: 40px;
+    font-size: 20px;
   }
 }
 .close-button {
@@ -346,6 +371,7 @@
   justify-content: center;
   align-items: center;
   height: 100%;
+  margin-right: 0;
   margin-right: 0;
 }
 
