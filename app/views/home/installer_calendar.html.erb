@@ -227,38 +227,35 @@ document.addEventListener('turbo:load', function() {
           console.log('Received job data:', data);
 
           var jobDetails = `
-          <div class="col-md-6" id="job-deets">
-            <p><strong>Job Number:</strong> ${data.job_number}</p>
-            <p><strong>Customer Name:</strong> ${data.customer_name}</p>
-            <p><strong>Address:</strong> ${data.address}</p>
-            <p><strong>Customer Phone:</strong> ${data.customer_phone}</p>
-            <p><strong>Customer Email:</strong> ${data.customer_email}</p>
-            <p><strong>Total Amount:</strong> $${data.total_amount}</p>
-            <p><strong>Type of Work:</strong> ${data.type_of_work}</p>
-            <p><strong>Installed?</strong> ${data.installed}</p>
-            <p><strong>Install By:</strong> ${data.crew ? data.crew.name : 'N/A'}</p>
-            <p><strong>Install Date:</strong> ${data.install_date || 'N/A'}</p>
-            <p><strong>Install Start Date:</strong> ${data.install_start_date || 'N/A'}</p>
-            <p><strong>Install End Date:</strong> ${data.install_end_date || 'N/A'}</p>
-          </div>
-          <div class="col-md-12" id="job-attach">
-            <div id="attachments-carousel" class="carousel">
-              ${data.files && data.files.length ? data.files.map((file, index) => {
-                if (!file || !file.url) {
-                  return '<p>File data missing or corrupt.</p>';
-                }
-                const fileType = file.url.split('.').pop().toLowerCase();
-                return `<div class="carousel-item ${index === 0 ? 'active' : ''}">
-                  ${['jpg', 'jpeg', 'png', 'gif'].includes(fileType) ? 
-                  `<img src="${file.url}" alt="${file.filename || 'Image'}" style="max-width: 100%; margin-bottom: 10px;">` : 
-                  fileType === 'pdf' ? `<embed src="${file.url}" width="100%" height="100%" type="application/pdf">` : 
-                  `<a href="${file.url}" target="_blank">${file.filename || 'File'}</a>`}
-                </div>`;
-              }).join('') : '<p>No attachments available.</p>'}
+            <div class="col-md-6" id="job-deets">
+              <p><strong>Job Number:</strong> ${data.job_number}</p>
+              <p><strong>Customer Name:</strong> ${data.customer_name}</p>
+              <p><strong>Address:</strong> ${data.address}</p>
+              <p><strong>Customer Phone:</strong> ${data.customer_phone}</p>
+              <p><strong>Customer Email:</strong> ${data.customer_email}</p>
+              <p><strong>Type of Work:</strong> ${data.type_of_work}</p>
+              <p><strong>Install By:</strong> ${data.crew ? data.crew : 'Not Assigned'}</p>
+              <p><strong>Install Start Date:</strong> ${data.install_start_date || 'N/A'}</p>
+              <p><strong>Install End Date:</strong> ${data.install_end_date || 'N/A'}</p>
             </div>
-            <button class="carousel-control-prev" type="button" onclick="prevSlide()">&#10094;</button>
-            <button class="carousel-control-next" type="button" onclick="nextSlide()">&#10095;</button>
-          </div>
+            <div class="col-md-12" id="job-attach">
+              <div id="attachments-carousel" class="carousel">
+                ${data.files.map((file, index) => {
+                  if (!file || !file.url) {
+                    return '<p>File data missing or corrupt.</p>';
+                  }
+                  const fileType = file.url.split('.').pop().toLowerCase();
+                  return `<div class="carousel-item ${index === 0 ? 'active' : ''}">
+                    ${['jpg', 'jpeg', 'png', 'gif'].includes(fileType) ? 
+                    `<img src="${file.url}" alt="${file.filename || 'Image'}" style="max-width: 100%; margin-bottom: 10px;">` : 
+                    fileType === 'pdf' ? `<embed src="${file.url}" width="100%" height="100%" type="application/pdf">` : 
+                    `<a href="${file.url}" target="_blank">${file.filename || 'File'}</a>`}
+                  </div>`;
+                }).join('') || '<p>No attachments available.</p>'}
+              </div>
+              <button class="carousel-control-prev" type="button" onclick="prevSlide()">&#10094;</button>
+              <button class="carousel-control-next" type="button" onclick="nextSlide()">&#10095;</button>
+            </div>
           `;
           document.getElementById('job-details').innerHTML = jobDetails;
           document.getElementById('jobModal').style.display = 'block';

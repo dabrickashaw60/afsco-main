@@ -13,6 +13,11 @@ class Job < ApplicationRecord
 
   before_save :update_install_status_and_date
 
+  def job_category
+    return 'N/A' unless salesman.present?
+    salesman.role.include?('residential') ? 'Residential' : 'Commercial'
+  end
+
   def full_address
     [address, city, state, country].compact.join(', ')
   end

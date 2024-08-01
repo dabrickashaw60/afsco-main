@@ -35,11 +35,12 @@ class JobsController < ApplicationController
 
   def new
     @job = Job.new
-    @salesmen = User.where(role: 'salesman')
+    @salesmen = User.where(role: ['residential_salesman', 'commercial_salesman'])
   end
 
   def create
     @job = Job.new(job_params)
+    @job.type_of_work = determine_job_type(@job.salesman_id)
     if @job.save
       redirect_to @job, notice: 'Job was successfully created.'
     else
@@ -49,11 +50,15 @@ class JobsController < ApplicationController
   end
 
   def edit
-    @salesmen = User.where(role: 'salesman')
+    @job = Job.find(params[:id])
+    @salesmen = User.where(role: ['residential_salesman', 'commercial_salesman'])
   end
 
   def update
-    if @job.update(job_params)
+    @job = Job.find(params[:id])
+    @job.assign_attributes(job_params)
+    @job.type_of_work = determine_job_type(@job.salesman_id)
+    if @job.save
       redirect_to @job, notice: 'Job was successfully updated.'
     else
       render :edit
@@ -126,6 +131,11 @@ class JobsController < ApplicationController
   end
 
   private
+
+  def determine_job_type(salesman_id)
+    salesman = User.find(salesman_id)
+    salesman.role.include?('residential') ? 'Residential' : 'Commercial'
+  end
 
   def set_job
     @job = Job.find(params[:id])

@@ -2,6 +2,15 @@
 
 <p><strong>Job Number:</strong> <%= @job.job_number %></p>
 <p><strong>Salesman:</strong> <%= @job.salesman.name %></p>
+<p><strong>Category:</strong> 
+  <%= if @job.salesman.role == 'residential_salesman'
+        'Residential'
+      elsif @job.salesman.role == 'commercial_salesman'
+        'Commercial'
+      else
+        'Unknown'
+      end %>
+</p>
 <p><strong>Customer Name:</strong> <%= @job.customer_name %></p>
 <p><strong>Address:</strong> <%= @job.address %></p>
 <p><strong>Customer Phone:</strong> <%= @job.customer_phone %></p>
@@ -9,7 +18,7 @@
 <p><strong>Total Amount:</strong> <%= number_to_currency(@job.total_amount) %></p>
 <p><strong>Type of Work:</strong> <%= @job.type_of_work %></p>
 <p><strong>Installed?</strong> <%= @job.installed %></p>
-<p><strong>Install By:</strong> <%= @job.crew.name %></p>
+<p><strong>Install By:</strong> <%= @job.crew ? @job.crew.name : 'No crew assigned' %></p>
 <p><strong>Install Date:</strong> <%= @job.install_date %></p>
 <p><strong>Install Start Date:</strong> <%= @job.install_start_date %></p>
 <p><strong>Install End Date:</strong> <%= @job.install_end_date %></p>
@@ -17,9 +26,9 @@
 <%= link_to 'Edit', edit_job_path(@job), class: 'btn btn-primary' %>
 <%= link_to 'Back', jobs_path, class: 'btn btn-secondary' %>
 <%= form_with(url: job_path(@job), method: :delete, local: true) do |form| %>
-          <% if @job.salesman == current_user %>
-  <%= form.submit "Delete", data: { confirm: 'Are you sure?' }, class: 'btn btn-danger'  %>
-  <%end%>
+  <% if @job.salesman == current_user %>
+    <%= form.submit "Delete", data: { confirm: 'Are you sure?' }, class: 'btn btn-danger' %>
+  <% end %>
 <% end %>
 
 <h2>Attachments</h2>
@@ -44,5 +53,3 @@
   </div>
   <%= form.submit "Upload", class: 'btn btn-primary' %>
 <% end %>
-
-

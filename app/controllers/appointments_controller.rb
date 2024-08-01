@@ -5,8 +5,13 @@ class AppointmentsController < ApplicationController
 
   def index
     @appointments = Appointment.order(start_time: :asc)
-    @past_appointments = Appointment.where('end_time < ?', Time.now).order(start_time: :desc)
-    @upcoming_appointments = Appointment.where('start_time >= ? AND start_time <= ?', Time.now, Time.now + 7.days).order(start_time: :asc)
+    @todays_date = Date.current
+    @start_of_today = @todays_date.beginning_of_day
+    @end_of_today = @todays_date.end_of_day
+
+    @today_appointments = Appointment.where(start_time: @start_of_today..@end_of_today)
+    @past_appointments = Appointment.where("start_time < ?", @start_of_today).order(start_time: :desc)
+    @upcoming_appointments = Appointment.where("start_time > ?", @end_of_today).order(start_time: :asc)
     @appointment = Appointment.new
   end
 

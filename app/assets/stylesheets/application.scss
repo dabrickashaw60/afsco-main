@@ -47,6 +47,19 @@
    .nav-arrow, .btn-secondary, .btn-primary {
      margin: 0 10px;
    }
+   .nav-arrow{
+    background: none;
+    border-color: #45ad4e;
+    color: #45ad4e;
+    border-radius: 2em;
+    box-shadow: 0px 0px 4px 2px #8888;
+    height: 40px;
+    width: 40px;
+    font-size: 20px;
+    line-height: 40px;
+    text-align: center;
+    text-decoration: none;
+   }
  
    .current-week {
      font-size: 18px;
@@ -86,7 +99,7 @@
      flex-direction: column;
      justify-content: space-between;
      height: 150px;
-     overflow: hidden;
+     overflow-y: auto;
    }
    .calendar-day-block::after{
     content:  '';

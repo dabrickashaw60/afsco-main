@@ -13,10 +13,11 @@
       </div>
     <% end %>
 
-  <div class="form-group">
-    <%= form.label :salesman_id, "Salesman" %>
-    <%= form.collection_select :salesman_id, @salesmen, :id, :name, { prompt: "Select Salesman" }, { class: 'form-control' } %>
-  </div>
+<div class="form-group">
+  <%= form.label :salesman_id, "Salesman" %>
+  <%= form.collection_select :salesman_id, @salesmen, :id, :name_with_category, { prompt: "Select Salesman" }, { class: 'form-control' } %>
+</div>
+
 
   <div class="form-group">
     <%= form.label :job_number %>
@@ -62,10 +63,32 @@
     <%= form.number_field :total_amount, step: :any, class: 'form-control' %>
   </div>
 
-  <div class="form-group">
-    <%= form.label :type_of_work %>
-    <%= form.text_field :type_of_work, class: 'form-control' %>
+<div class="form-group">
+  <%= form.label :type_of_work, "Type of Work" %>
+  <%= form.hidden_field :type_of_work, class: 'form-control', id: 'type_of_work_field' %>
+</div>
+
+<div class="form-group">
+  <%= form.label :materials, "Materials (select all that apply)", class: "form-label" %><br>
+  <div>
+    <%= check_box_tag 'material_option', 'PVC', false, class: 'material-checkbox' %>
+    <%= label_tag 'material_option', "PVC" %>
   </div>
+  <div>
+    <%= check_box_tag 'material_option', 'Aluminum', false, class: 'material-checkbox' %>
+    <%= label_tag 'material_option', "Aluminum" %>
+  </div>
+  <div>
+    <%= check_box_tag 'material_option', 'Wood', false, class: 'material-checkbox' %>
+    <%= label_tag 'material_option', "Wood" %>
+  </div>
+  <div>
+    <%= check_box_tag 'material_option', 'Chain Link', false, class: 'material-checkbox' %>
+    <%= label_tag 'material_option', "Chain Link" %>
+  </div>
+</div>
+
+
 
   <div class="form-group">
   <%= form.label :files, "Upload Files" %>
