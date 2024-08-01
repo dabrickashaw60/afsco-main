@@ -1,10 +1,7 @@
-<h1><%= action_name.capitalize %>  Job</h1>
-
 <%= form_with(model: @job, local: true, html: { multipart: true }) do |form| %>
   <% if @job.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(@job.errors.count, "error") %> prohibited this job from being saved:</h2>
-
       <ul>
         <% @job.errors.full_messages.each do |message| %>
           <li><%= message %></li>
@@ -12,6 +9,11 @@
       </ul>
     </div>
   <% end %>
+
+  <div class="form-group">
+    <%= form.label :salesman_id, "Salesman" %>
+    <%= form.collection_select :salesman_id, @salesmen, :id, :name_with_category, { prompt: "Select Salesman" }, { class: 'form-control' } %>
+  </div>
 
   <div class="form-group">
     <%= form.label :job_number %>
@@ -28,23 +30,24 @@
     <%= form.text_field :address, class: 'form-control' %>
   </div>
 
-<div class="form-group">
+  <div class="form-group">
     <%= form.label :city %>
     <%= form.text_field :city, class: 'form-control' %>
   </div>
+
   <div class="form-group">
     <%= form.label :state %>
     <%= form.text_field :state, class: 'form-control' %>
   </div>
 
-    <div class="form-group">
+  <div class="form-group">
     <%= form.label :country %>
     <%= form.text_field :country, class: 'form-control' %>
   </div>
 
   <div class="form-group">
     <%= form.label :customer_phone %>
-    <%= form.text_field :customer_phone, class: 'form-control' %>
+    <%= form.text_field :customer_phone, class: 'form-control', pattern: '\d{3}-\d{3}-\d{4}', title: 'Phone number format: ###-###-####' %>
   </div>
 
   <div class="form-group">
@@ -58,15 +61,20 @@
   </div>
 
   <div class="form-group">
-    <%= form.label :type_of_work %>
-    <%= form.text_field :type_of_work, class: 'form-control' %>
+    <%= form.label :type_of_work, "Type of Work" %>
+    <div>
+      <%= form.check_box :type_of_work, { multiple: true }, 'PVC', nil %> PVC
+      <%= form.check_box :type_of_work, { multiple: true }, 'Aluminum', nil %> Aluminum
+      <%= form.check_box :type_of_work, { multiple: true }, 'Wood', nil %> Wood
+      <%= form.check_box :type_of_work, { multiple: true }, 'Chain Link', nil %> Chain Link
+    </div>
   </div>
 
   <div class="form-group">
-  <%= form.label :files, "Upload Files" %>
-  <%= form.file_field :files, multiple: true, class: "form-control" %>
-</div>
+    <%= form.label :files, "Upload Files" %>
+    <%= form.file_field :files, multiple: true, class: 'form-control' %>
+  </div>
 
-  <%= form.submit class: 'btn btn-primary' %>
+  <%= form.submit 'Create Job', class: 'btn btn-primary' %>
   <%= link_to 'Back', jobs_path, class: 'btn btn-secondary' %>
 <% end %>

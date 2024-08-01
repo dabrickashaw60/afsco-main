@@ -25,13 +25,13 @@ class JobsController < ApplicationController
       format.js # This will render index.js.erb
     end
   end
+
   def show
     respond_to do |format|
       format.html # Redirect or render HTML as needed
       format.json { render json: @job }
     end
   end
-  
 
   def new
     @job = Job.new
@@ -40,7 +40,7 @@ class JobsController < ApplicationController
 
   def create
     @job = Job.new(job_params)
-    @job.type_of_work = determine_job_type(@job.salesman_id)
+    @job.type_of_work = determine_type_of_work
     if @job.save
       redirect_to @job, notice: 'Job was successfully created.'
     else
@@ -57,7 +57,7 @@ class JobsController < ApplicationController
   def update
     @job = Job.find(params[:id])
     @job.assign_attributes(job_params)
-    @job.type_of_work = determine_job_type(@job.salesman_id)
+    @job.type_of_work = determine_type_of_work
     if @job.save
       redirect_to @job, notice: 'Job was successfully updated.'
     else
@@ -66,7 +66,7 @@ class JobsController < ApplicationController
   end
 
   def destroy
-    if @job.present? && @job.salesman == current_user
+    if @job.present? && (@job.salesman == current_user || current_user.super_admin?)
       @job.destroy
       redirect_to jobs_path, notice: 'Job was successfully deleted.'
     else
@@ -120,9 +120,7 @@ class JobsController < ApplicationController
       redirect_to @job, alert: 'No file selected or upload failed.'
     end
   end
-  
-  
-  
+
   def delete_file_attachment
     @job = Job.find(params[:id])
     file = @job.files.find(params[:file_id])
@@ -132,9 +130,13 @@ class JobsController < ApplicationController
 
   private
 
-  def determine_job_type(salesman_id)
+  def determine_job_category(salesman_id)
     salesman = User.find(salesman_id)
     salesman.role.include?('residential') ? 'Residential' : 'Commercial'
+  end
+
+  def determine_type_of_work
+    params[:job][:type_of_work].reject(&:blank?).join(', ')
   end
 
   def set_job

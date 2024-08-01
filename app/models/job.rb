@@ -8,8 +8,9 @@ class Job < ApplicationRecord
   after_validation :geocode, if: :will_save_change_to_address?
 
   validates :job_number, presence: true, uniqueness: true, format: { with: /\A\d{2}-\d{5}\z/, message: "must be in the format ##-#####" }
-  validates :customer_name, :address, :customer_phone, :customer_email, :total_amount, :type_of_work, presence: true
+  validates :customer_name, :address, :customer_phone, :customer_email, :total_amount, presence: true
   validates :install_start_date, :install_end_date, presence: true, if: :installed?
+  validates :type_of_work, presence: true, format: { with: /\A(PVC|Aluminum|Wood|Chain Link)(, (PVC|Aluminum|Wood|Chain Link))*\z/, message: "must be a comma-separated list of materials" }
 
   before_save :update_install_status_and_date
 
@@ -22,11 +23,6 @@ class Job < ApplicationRecord
     [address, city, state, country].compact.join(', ')
   end
 
-  # def as_json(options = {})
-  # super(options).merge({
-  #   files: self.files.map { |file| Rails.application.routes.url_helpers.rails_blob_url(file, host: 'localhost', port: 3000) }
-  # })
-  # end
   def as_json(options = {})
     super(options).merge({
       job_number: job_number,
