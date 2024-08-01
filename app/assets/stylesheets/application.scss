@@ -123,7 +123,7 @@
    }
  
    .appointment {
-     background-color: #007bff;
+     background-color: #45ad45;
      color: #fff;
      padding: 5px;
      margin: 5px 0;
@@ -412,4 +412,31 @@
 
 .carousel-control-next {
   right: 10px;
+}
+
+// BUTTON OVERRIDE
+.btn.btn-primary.btn-sm, .btn.btn-primary{
+  --bs-btn-bg: #45ad45;
+  --bs-btn-border-color: #45ad45;
+    --bs-btn-hover-bg: #328032;
+    --bs-btn-hover-border-color: #338133;
+    --bs-btn-active-bg: #338133;
+    --bs-btn-active-border-color: #338133;
+    --bs-btn-disabled-bg:#45ad45;
+    --bs-btn-disabled-border-color: #45ad45;
+    --bs-btn-focus-shadow-rgb: 69, 173, 69;
+}
+.btn-outline-primary{
+  --bs-btn-color: #45ad45;
+    --bs-btn-border-color: #45ad45;
+    --bs-btn-hover-bg:#45ad45;
+    --bs-btn-hover-border-color: #45ad45;
+    --bs-btn-focus-shadow-rgb: 69, 173, 69;
+    --bs-btn-active-bg:#45ad45;
+    --bs-btn-active-border-color: #45ad45;
+    --bs-btn-disabled-color:#45ad45;
+    --bs-btn-disabled-border-color: #45ad45;
+}
+a{
+  color: rgba(69,173,69, var(--bs-link-opacity, 1));
 }
