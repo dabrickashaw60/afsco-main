@@ -1,6 +1,7 @@
 class HomeController < ApplicationController
   before_action :set_date_range, only: [:index, :installer_calendar]
 
+
   def index
     @current_month = params[:month] ? params[:month].to_i : Date.today.month
     @current_year = params[:year] ? params[:year].to_i : Date.today.year
