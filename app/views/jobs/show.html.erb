@@ -23,6 +23,18 @@
 <p><strong>Install Start Date:</strong> <%= @job.install_start_date %></p>
 <p><strong>Install End Date:</strong> <%= @job.install_end_date %></p>
 
+<p><strong>Converted from Appointment:</strong>
+  <% if @job.appointment.present? %>
+    <ul>
+      <li><strong>Title:</strong> <%= @job.appointment.title %></li>
+      <li><strong>Date:</strong> <%= @job.appointment.start_time.strftime("%B %d, %Y %I:%M %p") %></li>
+      <li><strong>Location:</strong> <%= @job.appointment.location %></li>
+    </ul>
+  <% else %>
+    <span>No appointment associated</span>
+  <% end %>
+</p>
+
 <%= link_to 'Edit', edit_job_path(@job), class: 'btn btn-primary' %>
 <%= link_to 'Back', jobs_path, class: 'btn btn-secondary' %>
 <%= form_with(url: job_path(@job), method: :delete, local: true) do |form| %>

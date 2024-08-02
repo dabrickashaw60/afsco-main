@@ -1,6 +1,6 @@
 class AppointmentsController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_appointment, only: [:show, :destroy]
+  before_action :set_appointment, only: [:show, :destroy, :convert_to_job]
   before_action :authorize_user!, only: [:destroy]
 
   def index
@@ -19,28 +19,47 @@ class AppointmentsController < ApplicationController
     @appointment = current_user.appointments.new
   end
 
-def show
-
-end
-
-def create
-  @appointment = current_user.appointments.new(appointment_params)
-  if @appointment.save
-    redirect_to root_path, notice: 'Appointment was successfully created.'
-  else
-    render :new, status: :unprocessable_entity
+  def show
   end
-end
 
-
-def destroy
-  if @appointment.present? && @appointment.user == current_user
-    @appointment.destroy
-    redirect_to root_path, notice: 'Appointment was successfully deleted.'
-  else
-    redirect_to root_path, alert: 'Appointment not found or not authorized to delete.'
+  def create
+    @appointment = current_user.appointments.new(appointment_params)
+    if @appointment.save
+      redirect_to root_path, notice: 'Appointment was successfully created.'
+    else
+      render :new, status: :unprocessable_entity
+    end
   end
-end
+
+  def destroy
+    if @appointment.present? && @appointment.user == current_user
+      @appointment.destroy
+      redirect_to root_path, notice: 'Appointment was successfully deleted.'
+    else
+      redirect_to root_path, alert: 'Appointment not found or not authorized to delete.'
+    end
+  end
+
+  def convert_to_job
+    job = Job.new(
+      job_number: params[:job_number],
+      salesman_id: @appointment.user_id,
+      customer_name: params[:customer_name],
+      address: params[:address],
+      customer_phone: params[:customer_phone],
+      customer_email: params[:customer_email],
+      total_amount: params[:total_amount],
+      type_of_work: params[:type_of_work],
+      installed: false,
+      appointment: @appointment
+    )
+    if job.save
+      @appointment.update(job_id: job.id)
+      redirect_to job_path(job), notice: 'Appointment was successfully converted to a job.'
+    else
+      redirect_to @appointment, alert: 'Failed to convert appointment to a job.'
+    end
+  end
 
   private
 

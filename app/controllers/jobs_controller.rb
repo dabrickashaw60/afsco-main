@@ -25,7 +25,7 @@ class JobsController < ApplicationController
       format.js # This will render index.js.erb
     end
   end
-
+  
   def show
     respond_to do |format|
       format.html # Redirect or render HTML as needed
@@ -40,7 +40,8 @@ class JobsController < ApplicationController
 
   def create
     @job = Job.new(job_params)
-    @job.type_of_work = determine_type_of_work
+    @job.type_of_work = determine_job_type(@job.salesman_id)
+    @job.job_category = determine_job_category(@job.salesman_id)
     if @job.save
       redirect_to @job, notice: 'Job was successfully created.'
     else
@@ -57,7 +58,8 @@ class JobsController < ApplicationController
   def update
     @job = Job.find(params[:id])
     @job.assign_attributes(job_params)
-    @job.type_of_work = determine_type_of_work
+    @job.type_of_work = determine_job_type(@job.salesman_id)
+    @job.job_category = determine_job_category(@job.salesman_id)
     if @job.save
       redirect_to @job, notice: 'Job was successfully updated.'
     else
@@ -66,7 +68,7 @@ class JobsController < ApplicationController
   end
 
   def destroy
-    if @job.present? && (@job.salesman == current_user || current_user.super_admin?)
+    if @job.present? && @job.salesman == current_user || current_user.super_admin?
       @job.destroy
       redirect_to jobs_path, notice: 'Job was successfully deleted.'
     else
@@ -135,8 +137,9 @@ class JobsController < ApplicationController
     salesman.role.include?('residential') ? 'Residential' : 'Commercial'
   end
 
-  def determine_type_of_work
-    params[:job][:type_of_work].reject(&:blank?).join(', ')
+  def determine_job_type(salesman_id)
+    salesman = User.find(salesman_id)
+    salesman.role.include?('residential') ? 'Residential' : 'Commercial'
   end
 
   def set_job
@@ -144,7 +147,7 @@ class JobsController < ApplicationController
   end
 
   def job_params
-    params.require(:job).permit(:job_number, :customer_name, :address, :customer_phone, :customer_email, :total_amount, :type_of_work, :salesman_id, :city, :state, :country, :crew_id, files: [])
+    params.require(:job).permit(:job_number, :customer_name, :address, :customer_phone, :customer_email, :total_amount, :type_of_work, :salesman_id, :city, :state, :country, :crew_id, :appointment_id, files: [])
   end
 
   def authorize_user!
@@ -165,7 +168,7 @@ class JobsController < ApplicationController
       'created_at'
     end
   end
-  
+
   def sort_direction
     %w[asc desc].include?(params[:direction]) ? params[:direction] : "asc"
   end

@@ -3,6 +3,7 @@ class Appointment < ApplicationRecord
   validates :user, presence: true
   validates :title, :start_time, :end_time, presence: true
   validate :end_time_after_start_time
+  belongs_to :job, optional: true
 
   private
 

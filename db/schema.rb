@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_08_01_181235) do
+ActiveRecord::Schema[7.1].define(version: 2024_08_02_154233) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -51,6 +51,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_01_181235) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "location"
+    t.integer "job_id"
     t.index ["user_id"], name: "index_appointments_on_user_id"
   end
 
@@ -96,6 +97,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_01_181235) do
     t.string "crew"
     t.integer "crew_id"
     t.string "job_category"
+    t.bigint "appointment_id"
+    t.index ["appointment_id"], name: "index_jobs_on_appointment_id"
     t.index ["salesman_id"], name: "index_jobs_on_salesman_id"
   end
 
@@ -130,6 +133,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_01_181235) do
   add_foreign_key "crews", "users", column: "foreman_id"
   add_foreign_key "crews", "users", column: "laborer1_id"
   add_foreign_key "crews", "users", column: "laborer2_id"
+  add_foreign_key "jobs", "appointments"
   add_foreign_key "jobs", "users", column: "salesman_id"
   add_foreign_key "salesmen", "users"
 end

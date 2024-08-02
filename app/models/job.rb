@@ -1,6 +1,8 @@
 class Job < ApplicationRecord
   belongs_to :salesman, class_name: 'User'
   belongs_to :crew, optional: true
+  belongs_to :appointment, optional: true
+  
   has_many :assignments, dependent: :destroy
   has_many_attached :files
 
