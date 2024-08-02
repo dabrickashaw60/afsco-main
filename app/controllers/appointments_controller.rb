@@ -9,9 +9,8 @@ class AppointmentsController < ApplicationController
     @start_of_today = @todays_date.beginning_of_day
     @end_of_today = @todays_date.end_of_day
 
-    @today_appointments = Appointment.where(start_time: @start_of_today..@end_of_today)
-    @past_appointments = Appointment.where("start_time < ?", @start_of_today).order(start_time: :desc)
-    @upcoming_appointments = Appointment.where("start_time > ?", @end_of_today).order(start_time: :asc)
+    @past_appointments = Appointment.where("start_time < ?", @start_of_today).order(start_time: :desc).limit(3)
+    @upcoming_appointments = Appointment.where("start_time > ?", @end_of_today).order(start_time: :asc).limit(3)
     @appointment = Appointment.new
   end
 
