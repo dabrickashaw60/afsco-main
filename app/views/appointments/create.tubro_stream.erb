@@ -1,0 +1,2 @@
+<%= turbo_stream.append 'appointments', partial: 'appointments/appointment', locals: { appointment: @appointment } %>
+<%= turbo_stream.replace 'new_appointment_form', partial: 'appointments/form', locals: { appointment: Appointment.new } %>

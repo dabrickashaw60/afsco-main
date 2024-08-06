@@ -18,6 +18,8 @@
 # end
 
 # Learn more: http://github.com/javan/whenever
+
+set :output, "log/cron_log.log"
 every :day, at: '12:00 am' do
   rake "jobs:update_install_status"
 end

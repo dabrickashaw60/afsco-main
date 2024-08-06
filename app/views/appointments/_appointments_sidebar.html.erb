@@ -1,42 +1,64 @@
 <div class="sidebar">
   <h3>Appointments</h3>
-  <%= link_to 'New Appointment', new_appointment_path, class: 'btn btn-primary' %>
-
-  <h4>Last 3 Appointments</h4>
-  <% past_appointments_to_display = @past_appointments.limit(3) %>
-  <% if past_appointments_to_display.present? && past_appointments_to_display.any? %>
-    <ul>
-      <% past_appointments_to_display.each do |appointment| %>
-        <div class="app-holder">
-          <li>
-            <p>Salesman: <%= appointment.user.name %></p>
-            <p>Name: <%= link_to appointment.title, appointment_path(appointment) %></p>
-            <p>Date: <%= appointment.start_time.strftime("%m/%d/%Y %I:%M %p") %></p>
-            <p>Address: <%= link_to appointment.location, "https://www.google.com/maps/search/?api=1&query=#{CGI.escape(appointment.location)}", target: "_blank" %></p>
-          </li>
+  <button onclick="toggleNewAppointmentForm()" class="btn btn-primary">New Appointment</button>
+  <div id="new-appointment-container" style="display: none;">
+    <div class="modal-content">
+      <h3>New Appointment</h3>
+      <%= form_with(model: @appointment, url: appointments_path, local: true) do |form| %>
+        <div class="form-group">
+          <%= form.label :title, "Appointment Title" %>
+          <%= form.text_field :title, class: "form-control" %>
         </div>
+        <div class="form-group">
+          <%= form.label :location, "Location" %>
+          <%= form.text_field :location, class: "form-control" %>
+        </div>
+        <div class="form-group">
+          <%= form.label :start_time, "Start Time" %>
+          <%= form.datetime_local_field :start_time, class: "form-control" %>
+        </div>
+        <div class="form-group">
+          <%= form.label :end_time, "End Time" %>
+          <%= form.datetime_local_field :end_time, class: "form-control" %>
+        </div>
+        <div class="form-group">
+          <%= form.label :user_id, "Salesman" %>
+          <%= form.collection_select :user_id, User.all, :id, :name, prompt: "Select Salesman", class: "form-control" %>
+        </div>
+        <div class="actions">
+          <%= form.submit "Create Appointment", class: "btn btn-primary" %>
+        </div>
+      <% end %>
+      <button onclick="toggleNewAppointmentForm()" class="btn btn-secondary">Cancel</button>
+    </div>
+  </div>
+
+  <h4>Past Appointments</h4>
+  <% if @past_appointments.present? && @past_appointments.any? %>
+    <ul>
+      <% @past_appointments.each do |appointment| %>
+        <%= render partial: 'appointments/appointment', locals: { appointment: appointment } %>
       <% end %>
     </ul>
   <% else %>
     <p>No past appointments.</p>
   <% end %>
 
-  <h4>Next 3 Appointments</h4>
-  <% upcoming_appointments_to_display = @upcoming_appointments.limit(3) %>
-  <% if upcoming_appointments_to_display.present? && upcoming_appointments_to_display.any? %>
+  <h4>Upcoming Appointments</h4>
+  <% if @upcoming_appointments.present? && @upcoming_appointments.any? %>
     <ul>
-      <% upcoming_appointments_to_display.each do |appointment| %>
-        <div class="app-holder">
-          <li>
-            <p>Salesman: <%= appointment.user.name %></p>
-            <p>Name: <%= link_to appointment.title, appointment_path(appointment) %></p>
-            <p>Date: <%= appointment.start_time.strftime("%m/%d/%Y %I:%M %p") %></p>
-            <p>Address: <%= link_to appointment.location, "https://www.google.com/maps/search/?api=1&query=#{CGI.escape(appointment.location)}", target: "_blank" %></p>
-          </li>
-        </div>
+      <% @upcoming_appointments.each do |appointment| %>
+        <%= render partial: 'appointments/appointment', locals: { appointment: appointment } %>
       <% end %>
     </ul>
   <% else %>
     <p>No upcoming appointments.</p>
   <% end %>
 </div>
+
+<script>
+  function toggleNewAppointmentForm() {
+    var formContainer = document.getElementById('new-appointment-container');
+    formContainer.style.display = formContainer.style.display === 'none' ? 'block' : 'none';
+  }
+</script>
