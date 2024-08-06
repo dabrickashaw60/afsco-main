@@ -9,4 +9,7 @@ module ApplicationHelper
       "asc"
     end
   end
+  def format_date(date)
+    date.strftime("%m-%d-%y") if date.present?
+  end
 end

@@ -2,6 +2,8 @@ class AppointmentsController < ApplicationController
   before_action :authenticate_user!
   before_action :set_appointment, only: [:new, :show, :destroy, :convert_to_job]
   before_action :authorize_user!, only: [:destroy]
+  helper :application
+
 
   def index
     @appointments = Appointment.order(start_time: :asc)

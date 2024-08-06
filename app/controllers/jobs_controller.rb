@@ -3,6 +3,8 @@ class JobsController < ApplicationController
   before_action :authenticate_user!
   before_action :authorize_user!, only: [:edit, :update, :destroy]
   before_action :authorize_super_admin, only: [:assign_job, :unassign_job]
+  helper :application
+
 
   def index
     @jobs = Job.all

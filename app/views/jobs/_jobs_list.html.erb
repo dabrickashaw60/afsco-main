@@ -8,17 +8,18 @@
     <td><%= job.customer_email %></td>
     <td><%= number_to_currency(job.total_amount) %></td>
     <td><%= job.type_of_work %></td>
-    <td><%= job.created_at.strftime("%m/%d/%Y") %></td>
-        <td>
-          <div class="btn-group" role="group">
-            <%= link_to 'Show', job, class: 'btn btn-outline-primary' %>
-            <%= link_to 'Edit', edit_job_path(job), class: 'btn btn-outline-primary' %>
-            <% if job.salesman == current_user || current_user.super_admin? %>
-              <%= form_with(url: job_path(job), method: :delete, local: true, class: 'd-inline') do %>
-                <%= submit_tag 'Delete', data: { confirm: 'Are you sure?' }, class: 'btn btn-outline-danger' %>
-              <% end %>
-            <% end %>
-          </div>
-        </td>
+    <td><%= format_date(job.created_at)%></td>
+    <td>
+      <% if job.installed %>
+        <%= format_date(job.install_date) %>
+      <% else %>
+        Not Installed
+      <% end %>
+    </td>
+    <td>
+      <%= link_to 'Show', job, class: 'btn btn-primary' %>
+      <%= link_to 'Edit', edit_job_path(job), class: 'btn btn-secondary' %>
+      <%= link_to 'Destroy', job, method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger'   %>
+    </td>
   </tr>
 <% end %>

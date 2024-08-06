@@ -15,21 +15,22 @@
 </div>
 
 <div id="jobs-list">
-<table class="table">
-  <thead>
-    <tr>
-      <th><%= link_to 'Job Number', jobs_path(sort: 'job_number', direction: sort_direction('job_number')) %></th>
-      <th><%= link_to 'Salesman', jobs_path(sort: 'salesman', direction: sort_direction('salesman')) %></th>
-      <th><%= link_to 'Customer Name', jobs_path(sort: 'customer_name', direction: sort_direction('customer_name')) %></th>
-      <th>Address</th>
-      <th>Customer Phone</th>
-      <th>Customer Email</th>
-      <th>Total Amount</th>
-      <th>Type of Work</th>
-      <th><%= link_to 'Created At', jobs_path(sort: 'created_at', direction: sort_direction('created_at')) %></th>
-      <th></th>
-    </tr>
-  </thead>
+  <table class="table">
+    <thead>
+      <tr>
+        <th><%= link_to 'Job Number', jobs_path(sort: 'job_number', direction: sort_direction('job_number')) %></th>
+        <th><%= link_to 'Salesman', jobs_path(sort: 'salesman', direction: sort_direction('salesman')) %></th>
+        <th><%= link_to 'Customer Name', jobs_path(sort: 'customer_name', direction: sort_direction('customer_name')) %></th>
+        <th>Site Address</th>
+        <th>Customer Phone</th>
+        <th>Customer Email</th>
+        <th>Total $</th>
+        <th>Type</th>
+        <th><%= link_to 'Created', jobs_path(sort: 'created_at', direction: sort_direction('created_at')) %></th>
+        <th>Installed Status</th> <!-- New column for installed status -->
+        <th></th>
+      </tr>
+    </thead>
     <tbody>
       <%= render 'jobs_list' %>
     </tbody>

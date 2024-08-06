@@ -15,12 +15,12 @@
     <div class="calendar">
       <div class="calendar-header">
         <div class="calendar-crew-header">Crew</div>
-        <div class="calendar-day">Mon</div>
-        <div class="calendar-day">Tue</div>
-        <div class="calendar-day">Wed</div>
-        <div class="calendar-day">Thu</div>
-        <div class="calendar-day">Fri</div>
-        <div class="calendar-day">Sat</div>
+        <% start_date = @start_date %> <!-- Initialize the start date variable -->
+        <% %w[Mon Tue Wed Thu Fri Sat].each_with_index do |day, index| %>
+          <div class="calendar-day">
+            <%= "#{day} #{(start_date + index.days).day}" %> <%= '(Today)' if (start_date + index.days).today? %>
+          </div>
+        <% end %>
       </div>
       <div class="calendar-body">
         <% 10.times do |row_index| %>
@@ -28,9 +28,9 @@
             <div class="calendar-crew">
               <% if row_index < @crews.length %>
                 <strong><%= @crews[row_index].name %></strong>
-                 <h3>&</h3> 
-                  <p><%= @crews[row_index].laborer1&.name %></p>
-                 <p><%= @crews[row_index].laborer2&.name %></p>
+                <h3>&</h3>
+                <p><%= @crews[row_index].laborer1&.name %></p>
+                <p><%= @crews[row_index].laborer2&.name %></p>
               <% else %>
                 No Crew
               <% end %>
@@ -44,7 +44,7 @@
                   <% assignment = Assignment.find_by(crew_id: crew.id, date: day) %>
                   <% if assignment %>
                     <div class="job-details" data-job-id="<%= assignment.job.id %>">
-                      <%= assignment.job.job_number %> <br> <%= assignment.job.customer_name %> 
+                      <%= assignment.job.job_number %> <br> <%= assignment.job.customer_name %>
                       <br>
                     </div>
                     <button onclick="unassignJob('<%= assignment.id %>')" class="btn btn-primary btn-sm">Unassign</button>
@@ -212,94 +212,94 @@
     });
   }
 
-document.addEventListener('turbo:load', function() {
-  document.querySelectorAll('.job-details').forEach(function(element) {
-    element.addEventListener('click', function() {
-      var jobId = this.dataset.jobId;
-      fetch(`/jobs/${jobId}.json`)
-        .then(response => {
-          if (!response.ok) {
-            throw new Error('Network response was not ok');
-          }
-          return response.json();
-        })
-        .then(data => {
-          console.log('Received job data:', data);
+  document.addEventListener('turbo:load', function() {
+    document.querySelectorAll('.job-details').forEach(function(element) {
+      element.addEventListener('click', function() {
+        var jobId = this.dataset.jobId;
+        fetch(`/jobs/${jobId}.json`)
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('Network response was not ok');
+            }
+            return response.json();
+          })
+          .then(data => {
+            console.log('Received job data:', data);
 
-          var jobDetails = `
-            <div class="col-md-6" id="job-deets">
-              <p><strong>Job Number:</strong> ${data.job_number}</p>
-              <p><strong>Customer Name:</strong> ${data.customer_name}</p>
-              <p><strong>Address:</strong> ${data.address}</p>
-              <p><strong>Customer Phone:</strong> ${data.customer_phone}</p>
-              <p><strong>Customer Email:</strong> ${data.customer_email}</p>
-              <p><strong>Type of Work:</strong> ${data.type_of_work}</p>
-              <p><strong>Install By:</strong> ${data.crew ? data.crew : 'Not Assigned'}</p>
-              <p><strong>Install Start Date:</strong> ${data.install_start_date || 'N/A'}</p>
-              <p><strong>Install End Date:</strong> ${data.install_end_date || 'N/A'}</p>
-            </div>
-            <div class="col-md-12" id="job-attach">
-              <div id="attachments-carousel" class="carousel">
-                ${data.files.map((file, index) => {
-                  if (!file || !file.url) {
-                    return '<p>File data missing or corrupt.</p>';
-                  }
-                  const fileType = file.url.split('.').pop().toLowerCase();
-                  return `<div class="carousel-item ${index === 0 ? 'active' : ''}">
-                    ${['jpg', 'jpeg', 'png', 'gif'].includes(fileType) ? 
-                    `<img src="${file.url}" alt="${file.filename || 'Image'}" style="max-width: 100%; margin-bottom: 10px;">` : 
-                    fileType === 'pdf' ? `<embed src="${file.url}" width="100%" height="100%" type="application/pdf">` : 
-                    `<a href="${file.url}" target="_blank">${file.filename || 'File'}</a>`}
-                  </div>`;
-                }).join('') || '<p>No attachments available.</p>'}
+            var jobDetails = `
+              <div class="col-md-6" id="job-deets">
+                <p><strong>Job Number:</strong> ${data.job_number}</p>
+                <p><strong>Customer Name:</strong> ${data.customer_name}</p>
+                <p><strong>Address:</strong> ${data.address}</p>
+                <p><strong>Customer Phone:</strong> ${data.customer_phone}</p>
+                <p><strong>Customer Email:</strong> ${data.customer_email}</p>
+                <p><strong>Type of Work:</strong> ${data.type_of_work}</p>
+                <p><strong>Install By:</strong> ${data.crew ? data.crew : 'Not Assigned'}</p>
+                <p><strong>Install Start Date:</strong> ${data.install_start_date || 'N/A'}</p>
+                <p><strong>Install End Date:</strong> ${data.install_end_date || 'N/A'}</p>
               </div>
-              <button class="carousel-control-prev" type="button" onclick="prevSlide()">&#10094;</button>
-              <button class="carousel-control-next" type="button" onclick="nextSlide()">&#10095;</button>
-            </div>
-          `;
-          document.getElementById('job-details').innerHTML = jobDetails;
-          document.getElementById('jobModal').style.display = 'block';
-          document.getElementById('overlay').style.display = 'block';
+              <div class="col-md-12" id="job-attach">
+                <div id="attachments-carousel" class="carousel">
+                  ${data.files.map((file, index) => {
+                    if (!file || !file.url) {
+                      return '<p>File data missing or corrupt.</p>';
+                    }
+                    const fileType = file.url.split('.').pop().toLowerCase();
+                    return `<div class="carousel-item ${index === 0 ? 'active' : ''}">
+                      ${['jpg', 'jpeg', 'png', 'gif'].includes(fileType) ? 
+                      `<img src="${file.url}" alt="${file.filename || 'Image'}" style="max-width: 100%; margin-bottom: 10px;">` : 
+                      fileType === 'pdf' ? `<embed src="${file.url}" width="100%" height="100%" type="application/pdf">` : 
+                      `<a href="${file.url}" target="_blank">${file.filename || 'File'}</a>`}
+                    </div>`;
+                  }).join('') || '<p>No attachments available.</p>'}
+                </div>
+                <button class="carousel-control-prev" type="button" onclick="prevSlide()">&#10094;</button>
+                <button class="carousel-control-next" type="button" onclick="nextSlide()">&#10095;</button>
+              </div>
+            `;
+            document.getElementById('job-details').innerHTML = jobDetails;
+            document.getElementById('jobModal').style.display = 'block';
+            document.getElementById('overlay').style.display = 'block';
 
-          initCarousel();
-        })
-        .catch(error => {
-          console.error('Error fetching job details:', error);
-          alert('An error occurred while fetching job details.');
-        });
+            initCarousel();
+          })
+          .catch(error => {
+            console.error('Error fetching job details:', error);
+            alert('An error occurred while fetching job details.');
+          });
+      });
     });
   });
-});
 
-let currentSlide = 0;
+  let currentSlide = 0;
 
-function initCarousel() {
-  const slides = document.querySelectorAll('#attachments-carousel .carousel-item');
-  if (slides.length > 0) {
-    showSlide(currentSlide);
+  function initCarousel() {
+    const slides = document.querySelectorAll('#attachments-carousel .carousel-item');
+    if (slides.length > 0) {
+      showSlide(currentSlide);
+    }
   }
-}
 
-function showSlide(index) {
-  const slides = document.querySelectorAll('#attachments-carousel .carousel-item');
-  if (index >= slides.length) currentSlide = 0;
-  if (index < 0) currentSlide = slides.length - 1;
+  function showSlide(index) {
+    const slides = document.querySelectorAll('#attachments-carousel .carousel-item');
+    if (index >= slides.length) currentSlide = 0;
+    if (index < 0) currentSlide = slides.length - 1;
 
-  slides.forEach(slide => slide.classList.remove('active'));
-  slides[currentSlide].classList.add('active');
-}
+    slides.forEach(slide => slide.classList.remove('active'));
+    slides[currentSlide].classList.add('active');
+  }
 
-function nextSlide() {
-  showSlide(++currentSlide);
-}
+  function nextSlide() {
+    showSlide(++currentSlide);
+  }
 
-function prevSlide() {
-  showSlide(--currentSlide);
-}
+  function prevSlide() {
+    showSlide(--currentSlide);
+  }
 
-function closeJobModal() {
-  document.getElementById('jobModal').style.display = 'none';
-  document.getElementById('overlay').style.display = 'none';
-}
+  function closeJobModal() {
+    document.getElementById('jobModal').style.display = 'none';
+    document.getElementById('overlay').style.display = 'none';
+  }
 
 </script>

@@ -12,16 +12,15 @@
       end %>
 </p>
 <p><strong>Customer Name:</strong> <%= @job.customer_name %></p>
-<p><strong>Address:</strong> <%= @job.address %></p>
+<p><strong>Site Address:</strong> <%= @job.address %></p>
 <p><strong>Customer Phone:</strong> <%= @job.customer_phone %></p>
 <p><strong>Customer Email:</strong> <%= @job.customer_email %></p>
-<p><strong>Total Amount:</strong> <%= number_to_currency(@job.total_amount) %></p>
-<p><strong>Type of Work:</strong> <%= @job.type_of_work %></p>
-<p><strong>Installed?</strong> <%= @job.installed %></p>
-<p><strong>Install By:</strong> <%= @job.crew ? @job.crew.name : 'No crew assigned' %></p>
-<p><strong>Install Date:</strong> <%= @job.install_date %></p>
-<p><strong>Install Start Date:</strong> <%= @job.install_start_date %></p>
-<p><strong>Install End Date:</strong> <%= @job.install_end_date %></p>
+<p><strong>Total $:</strong> <%= number_to_currency(@job.total_amount) %></p>
+<p><strong>Type:</strong> <%= @job.type_of_work %></p>
+<p><strong>Installed By:</strong> <%= @job.crew ? @job.crew.name : 'No crew assigned' %></p>
+<p><strong>Install Date:</strong> <%= format_date(@job.install_date) %></p>
+<p><strong>Install Start Date:</strong> <%= format_date(@job.install_start_date) %></p>
+<p><strong>Install End Date:</strong> <%= format_date(@job.install_end_date) %></p>
 
 <p><strong>Converted from Appointment:</strong>
   <% if @job.appointment.present? %>

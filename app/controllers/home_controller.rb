@@ -1,5 +1,7 @@
 class HomeController < ApplicationController
   before_action :set_date_range, only: [:index, :installer_calendar]
+  helper :application
+
 
 
   def index

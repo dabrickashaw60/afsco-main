@@ -1,6 +1,8 @@
 class CrewsController < ApplicationController
   before_action :authenticate_user!
   before_action :authorize_super_admin
+  helper :application
+
 
   def index
     @crews = Crew.all

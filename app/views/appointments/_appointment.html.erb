@@ -2,7 +2,7 @@
   <li>
     <p>Salesman: <%= appointment.user.name %></p>
     <p>Name: <%= link_to appointment.title, appointment_path(appointment) %></p>
-    <p>Date: <%= appointment.start_time.strftime("%m/%d/%Y %I:%M %p") %></p>
+    <p>Date: <%= format_date(appointment.start_time) %></p>
     <p>Address: <%= link_to appointment.location, "https://www.google.com/maps/search/?api=1&query=#{CGI.escape(appointment.location)}", target: "_blank" %></p>
   </li>
 </div>
