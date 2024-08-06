@@ -11,6 +11,7 @@ class HomeController < ApplicationController
     @past_appointments = Appointment.where('end_time < ?', Time.now).order(start_time: :desc)
     @upcoming_appointments = Appointment.where('start_time >= ? AND start_time <= ?', Time.now, Time.now + 7.days).order(start_time: :asc)
     
+    
     case @view_type
     when 'weekly'
       @start_date = Date.commercial(@current_year, @current_week, 1)
@@ -26,7 +27,7 @@ class HomeController < ApplicationController
   def installer_calendar
     @view_type = 'weekly'
     @crews = Crew.all
-    @jobs = Job.all
+    @jobs = Job.where(installed: false)
     @assignments = Assignment.all
     @selected_crews = {}
 

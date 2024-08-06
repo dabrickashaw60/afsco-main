@@ -60,7 +60,7 @@
     </div>
   </div>
 
-<div id="overlay" class="overlay"></div>
+  <div id="overlay" class="overlay"></div>
   <div class="modal" id="jobModal" tabindex="-1" role="dialog" aria-labelledby="jobModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
@@ -80,7 +80,7 @@
   <div class="col-md-3">
     <div class="job-sidebar">
       <h3>Scheduled Jobs</h3>
-      <% @jobs.where.not(crew: nil).each do |job| %> <!-- Jobs with a crew assigned -->
+      <% @jobs.where.not(crew: nil).each do |job| %> <!-- Jobs with a crew assigned and not installed -->
         <div class="job">
           <strong><%= job.job_number %></strong>
           <p><%= job.customer_name %></p>
@@ -92,7 +92,7 @@
 
     <div class="job-sidebar">
       <h3>Not Scheduled Jobs</h3>
-      <% @jobs.where(crew: nil).each do |job| %> <!-- Jobs without a crew assigned -->
+      <% @jobs.where(crew: nil).each do |job| %> <!-- Jobs without a crew assigned and not installed -->
         <div class="job">
           <strong><%= job.job_number %></strong>
           <p><%= job.customer_name %></p>
@@ -301,8 +301,5 @@ function closeJobModal() {
   document.getElementById('jobModal').style.display = 'none';
   document.getElementById('overlay').style.display = 'none';
 }
-
-
-
 
 </script>
