@@ -5,7 +5,8 @@
         <% if @view_type == 'weekly' %>
           <%= link_to '<', home_path(week: (@current_week == 1 ? 52 : @current_week - 1), year: (@current_week == 1 ? @current_year - 1 : @current_year), view: 'weekly'), class: 'nav-arrow' %>
           <div class="current-week">
-            Week <%= @current_week %>, <%= @current_year %>
+            <% ending_saturday = @start_date.end_of_week(:saturday) %>
+            Week Ending: <%= ending_saturday.strftime("%B %d, %Y") %>
           </div>
           <%= link_to '>', home_path(week: (@current_week == 52 ? 1 : @current_week + 1), year: (@current_week == 52 ? @current_year + 1 : @current_year), view: 'weekly'), class: 'nav-arrow' %>
         <% else %>
@@ -17,7 +18,7 @@
         <% end %>
       </div>
       <div class="d-flex align-items-center">
-        <%= link_to (@view_type == 'monthly' ? 'Weekly View' : 'Monthly View'), home_path(view: @view_type == 'monthly' ? 'weekly' : 'monthly'), class: 'btn btn-secondary mr-2' %>
+        <%= link_to (@view_type == 'monthly' ? 'Weekly View' : 'Monthly View'), home_path(view: @view_type == 'monthly' ? 'weekly' : 'monthly'), class: 'btn btn-outline-primary mr-2' %>
         <%= link_to 'Installer Calendar', installer_calendar_path, class: 'btn btn-secondary mr-2' %>
         <%= link_to 'New Appointment', new_appointment_path, class: 'btn btn-primary' %>
       </div>
