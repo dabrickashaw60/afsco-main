@@ -1,4 +1,5 @@
 class Crew < ApplicationRecord
+  has_many :jobs
   belongs_to :foreman, class_name: 'User', optional: true
   belongs_to :laborer1, class_name: 'User', optional: true
   belongs_to :laborer2, class_name: 'User', optional: true

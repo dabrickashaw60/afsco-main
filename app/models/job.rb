@@ -1,5 +1,5 @@
 class Job < ApplicationRecord
-  belongs_to :salesman, class_name: 'User'
+  belongs_to :salesman, class_name: 'User', foreign_key: 'salesman_id'
   belongs_to :crew, optional: true
   belongs_to :appointment, optional: true
   

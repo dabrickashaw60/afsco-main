@@ -1,5 +1,7 @@
-<%= form_with(model: appointment, url: appointments_path, local: true) do |form| %>
+<!-- app/views/appointments/edit.html.erb -->
+<h1>Edit Appointment</h1>
 
+<%= form_with model: @appointment, local: true do |form| %>
 
   <div class="field">
     <%= form.label :title %>
@@ -22,11 +24,13 @@
   </div>
 
   <div class="field">
-    <%= form.label :user_id, "Salesman" %>
-    <%= form.collection_select :user_id, User.all, :id, :name, prompt: "Select Salesman" %>
+    <%= form.label :user_id %>
+    <%= form.collection_select :user_id, User.where(role: ['commercial_salesman',	'residential_salesman', 'admin']), :id, :name, prompt: "Salesman" %>
   </div>
 
   <div class="actions">
-    <%= form.submit "Create Appointment" %>
+    <%= form.submit 'Update Appointment' %>
   </div>
 <% end %>
+
+<%= link_to 'Back', root_path %>

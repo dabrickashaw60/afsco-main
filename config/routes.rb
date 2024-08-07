@@ -4,14 +4,16 @@ Rails.application.routes.draw do
   # Home routes
   get 'home', to: 'home#index', as: 'home'
   root 'home#index'
+
   get 'map', to: 'home#map', as: 'map'
   
   # Appointment routes
-  resources :appointments do
-    member do
-      post :convert_to_job
-    end
+resources :appointments, only: [:index, :edit, :update, :new, :create, :show, :destroy] do
+  member do
+    post :convert_to_job
   end
+end
+
   
   # Job routes
   resources :jobs do

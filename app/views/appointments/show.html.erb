@@ -1,66 +1,70 @@
-<h2>Appointment Details</h2>
-
-<p>
-  <strong>Title:</strong>
-  <%= @appointment.title %>
-</p>
-
-<p>
-  <strong>Location:</strong>
-  <%= @appointment.location %>
-</p>
-
-<p>
-  <strong>Start Time:</strong>
-  <%= @appointment.start_time.strftime("%m/%d/%Y %I:%M %p") %>
-</p>
-
-<p>
-  <strong>End Time:</strong>
-  <%= @appointment.end_time.strftime("%m/%d/%Y %I:%M %p") %>
-</p>
-
-<p>Created by: <%= @appointment.user.name %></p>
-
-<% if @appointment.job.nil? %>
-  <%= form_with url: convert_to_job_appointment_path(@appointment), method: :post, local: true do |form| %>
-    <div class="form-group">
-      <%= form.label :job_number, "Job Number" %>
-      <%= form.text_field :job_number, class: 'form-control' %>
-    </div>
-    <div class="form-group">
-      <%= form.label :customer_name, "Customer Name" %>
-      <%= form.text_field :customer_name, value: @appointment.title, class: 'form-control' %>
-    </div>
-    <div class="form-group">
-      <%= form.label :address, "Address" %>
-      <%= form.text_field :address, value: @appointment.location, class: 'form-control' %>
-    </div>
-    <div class="form-group">
-      <%= form.label :customer_phone, "Customer Phone" %>
-      <%= form.text_field :customer_phone, class: 'form-control' %>
-    </div>
-    <div class="form-group">
-      <%= form.label :customer_email, "Customer Email" %>
-      <%= form.email_field :customer_email, class: 'form-control' %>
-    </div>
-    <div class="form-group">
-      <%= form.label :total_amount, "Total Amount" %>
-      <%= form.number_field :total_amount, step: :any, class: 'form-control' %>
-    </div>
-    <div class="form-group">
-      <%= form.label :type_of_work, "Type of Work" %>
-      <%= form.text_field :type_of_work, class: 'form-control' %>
-    </div>
-    <%= form.submit 'Convert to Job', class: 'btn btn-primary' %>
-  <% end %>
-<% else %>
-  <p>This appointment has been converted to job number: <%= link_to @appointment.job.job_number, @appointment.job %></p>
-<% end %>
-
-<%= link_to 'Back', root_path, class: 'btn btn-secondary' %> - 
-<%= form_with(url: appointment_path(@appointment), method: :delete, local: true) do |form| %>
-<% if @appointment.user == current_user %>
-  <%= form.submit "Delete", data: { confirm: 'Are you sure?' }, class: 'btn btn-danger'  %>
-<% end %>
+<div class="container mt-4">
+  <!-- Buttons -->
+  <div class="text-center mb-4">
+    <%= link_to 'Edit Appointment', edit_appointment_path(@appointment), class: 'btn btn-primary mx-2' %>
+    <%= link_to 'Back to Appointments', root_path, class: 'btn btn-secondary mx-2' %>
+    <%= form_with(url: appointment_path(@appointment), method: :delete, local: true) do |form| %>
+      <% if @appointment.user == current_user %>
+        <%= form.submit "Delete", data: { confirm: 'Are you sure?' }, class: 'btn btn-danger mx-2' %>
+      <% end %>
     <% end %>
+  </div>
+
+  <!-- Appointment Details Section -->
+  <div class="card mb-4">
+    <div class="card-header text-center">
+      Appointment Details
+    </div>
+    <div class="card-body">
+      <p><strong>Title:</strong> <%= @appointment.title %></p>
+      <p><strong>Location:</strong> <%= @appointment.location %></p>
+      <p><strong>Start Time:</strong> <%= @appointment.start_time.strftime("%m/%d/%Y %I:%M %p") %></p>
+      <p><strong>End Time:</strong> <%= @appointment.end_time.strftime("%m/%d/%Y %I:%M %p") %></p>
+      <p><strong>Salesman:</strong> <%= @appointment.user.name %></p>
+    </div>
+  </div>
+
+  <!-- Convert to Job Section -->
+  <div class="card mb-4">
+    <div class="card-header text-center">
+      Convert to Job
+    </div>
+    <div class="card-body">
+      <% if @appointment.job.nil? %>
+        <%= form_with url: convert_to_job_appointment_path(@appointment), method: :post, local: true do |form| %>
+          <div class="form-group">
+            <%= form.label :job_number, "Job Number" %>
+            <%= form.text_field :job_number, class: 'form-control' %>
+          </div>
+          <div class="form-group">
+            <%= form.label :customer_name, "Customer Name" %>
+            <%= form.text_field :customer_name, value: @appointment.title, class: 'form-control' %>
+          </div>
+          <div class="form-group">
+            <%= form.label :address, "Address" %>
+            <%= form.text_field :address, value: @appointment.location, class: 'form-control' %>
+          </div>
+          <div class="form-group">
+            <%= form.label :customer_phone, "Customer Phone" %>
+            <%= form.text_field :customer_phone, class: 'form-control' %>
+          </div>
+          <div class="form-group">
+            <%= form.label :customer_email, "Customer Email" %>
+            <%= form.email_field :customer_email, class: 'form-control' %>
+          </div>
+          <div class="form-group">
+            <%= form.label :total_amount, "Total Amount" %>
+            <%= form.number_field :total_amount, step: :any, class: 'form-control' %>
+          </div>
+          <div class="form-group">
+            <%= form.label :type_of_work, "Type of Work" %>
+            <%= form.text_field :type_of_work, class: 'form-control' %>
+          </div>
+          <%= form.submit 'Convert to Job', class: 'btn btn-primary' %>
+        <% end %>
+      <% else %>
+        <p>This appointment has been converted to job number: <%= link_to @appointment.job.job_number, @appointment.job %></p>
+      <% end %>
+    </div>
+  </div>
+</div>

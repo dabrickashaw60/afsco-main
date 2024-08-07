@@ -1,0 +1,35 @@
+<!-- app/views/crews/show.html.erb -->
+<h1><%= @crew.name %></h1>
+
+<h2>Foreman: <%= @crew.foreman&.name %></h2>
+<h3>Laborer 1: <%= @crew.laborer1&.name %></h3>
+<h3>Laborer 2: <%= @crew.laborer2&.name %></h3>
+
+<h2>Jobs Installed</h2>
+<table class="table">
+  <thead>
+    <tr>
+      <th>Job Number</th>
+      <th>Customer Name</th>
+      <th>Address</th>
+      <th>Install Start Date</th>
+      <th>Install End Date</th>
+      <th>Status</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @jobs.each do |job| %>
+      <tr>
+        <td><%= job.job_number %></td>
+        <td><%= job.customer_name %></td>
+        <td><%= job.address %></td>
+        <td><%= job.install_start_date.strftime("%m-%d-%y") %></td>
+        <td><%= job.install_end_date.strftime("%m-%d-%y") %></td>
+        <td><%= job.installed? ? "Installed" : "Pending" %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<%= link_to 'Edit Crew', edit_crew_path(@crew), class: 'btn btn-secondary' %>
+<%= link_to 'Back to Manage Crews', crews_path, class: 'btn btn-primary' %>

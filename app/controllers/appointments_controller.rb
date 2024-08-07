@@ -1,9 +1,7 @@
 class AppointmentsController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_appointment, only: [:new, :show, :destroy, :convert_to_job]
+  before_action :set_appointment, only: [:show, :destroy, :convert_to_job]
   before_action :authorize_user!, only: [:destroy]
-  helper :application
-
 
   def index
     @appointments = Appointment.order(start_time: :asc)
@@ -12,20 +10,31 @@ class AppointmentsController < ApplicationController
     @end_of_today = @todays_date.end_of_day
 
     @today_appointments = Appointment.where(start_time: @start_of_today..@end_of_today)
-    @past_appointments = Appointment.where("start_time < ?", @start_of_today).order(start_time: :desc).limit(3)
-    @upcoming_appointments = Appointment.where("start_time > ?", @end_of_today).order(start_time: :asc).limit(3)
+    @past_appointments = Appointment.where("start_time < ?", @start_of_today).order(start_time: :desc)
+    @upcoming_appointments = Appointment.where("start_time > ?", @end_of_today).order(start_time: :asc)
     @appointment = Appointment.new
   end
 
   def new
-    @appointment = current_user.appointments.new
+    @appointment = Appointment.new
   end
 
   def show
   end
 
+  def edit
+  end
+
+  def update
+    if @appointment.update(appointment_params)
+      redirect_to @appointment, notice: 'Appointment was successfully updated.'
+    else
+      render :edit, status: :unprocessable_entity
+    end
+  end
+
   def create
-    @appointment = current_user.appointments.new(appointment_params)
+    @appointment = Appointment.new(appointment_params)
     if @appointment.save
       redirect_to root_path, notice: 'Appointment was successfully created.'
     else
@@ -46,21 +55,24 @@ class AppointmentsController < ApplicationController
     job = Job.new(
       job_number: params[:job_number],
       salesman_id: @appointment.user_id,
-      customer_name: params[:customer_name], # Use params to get additional fields
+      customer_name: params[:customer_name],
       address: params[:address],
       customer_phone: params[:customer_phone],
       customer_email: params[:customer_email],
       total_amount: params[:total_amount],
       type_of_work: params[:type_of_work],
-      installed: false
+      installed: false,
+      appointment_id: @appointment.id 
     )
+  
     if job.save
       @appointment.update(job_id: job.id)
-      redirect_to @appointment, notice: 'Appointment was successfully converted to a job.'
+      redirect_to job, notice: 'Appointment was successfully converted to a job.'
     else
       redirect_to @appointment, alert: 'Failed to convert appointment to a job.'
     end
   end
+  
 
   private
 

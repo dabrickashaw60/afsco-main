@@ -14,7 +14,7 @@
   <tbody>
     <% @crews.each do |crew| %>
       <tr>
-        <td><%= crew.name %></td>
+        <td><%= link_to crew.name, crew_path(crew) %></td>
         <td><%= crew.foreman&.name %></td>
         <td><%= crew.laborer1&.name %></td>
         <td><%= crew.laborer2&.name %></td>

@@ -1,66 +1,102 @@
-<h1>Job Details</h1>
-
-<p><strong>Job Number:</strong> <%= @job.job_number %></p>
-<p><strong>Salesman:</strong> <%= @job.salesman.name %></p>
-<p><strong>Category:</strong> 
-  <%= if @job.salesman.role == 'residential_salesman'
-        'Residential'
-      elsif @job.salesman.role == 'commercial_salesman'
-        'Commercial'
-      else
-        'Unknown'
-      end %>
-</p>
-<p><strong>Customer Name:</strong> <%= @job.customer_name %></p>
-<p><strong>Site Address:</strong> <%= @job.address %></p>
-<p><strong>Customer Phone:</strong> <%= @job.customer_phone %></p>
-<p><strong>Customer Email:</strong> <%= @job.customer_email %></p>
-<p><strong>Total $:</strong> <%= number_to_currency(@job.total_amount) %></p>
-<p><strong>Type:</strong> <%= @job.type_of_work %></p>
-<p><strong>Installed By:</strong> <%= @job.crew ? @job.crew.name : 'No crew assigned' %></p>
-<p><strong>Install Date:</strong> <%= format_date(@job.install_date) %></p>
-<p><strong>Install Start Date:</strong> <%= format_date(@job.install_start_date) %></p>
-<p><strong>Install End Date:</strong> <%= format_date(@job.install_end_date) %></p>
-
-<p><strong>Converted from Appointment:</strong>
-  <% if @job.appointment.present? %>
-    <ul>
-      <li><strong>Title:</strong> <%= @job.appointment.title %></li>
-      <li><strong>Date:</strong> <%= @job.appointment.start_time.strftime("%B %d, %Y %I:%M %p") %></li>
-      <li><strong>Location:</strong> <%= @job.appointment.location %></li>
-    </ul>
-  <% else %>
-    <span>No appointment associated</span>
-  <% end %>
-</p>
-
-<%= link_to 'Edit', edit_job_path(@job), class: 'btn btn-primary' %>
-<%= link_to 'Back', jobs_path, class: 'btn btn-secondary' %>
-<%= form_with(url: job_path(@job), method: :delete, local: true) do |form| %>
-  <% if @job.salesman == current_user || current_user.super_admin? %>
-    <%= form.submit "Delete", data: { confirm: 'Are you sure?' }, class: 'btn btn-danger' %>
-  <% end %>
-<% end %>
-
-<h2>Attachments</h2>
-<% if @job.files.attached? %>
-  <ul>
-    <% @job.files.each do |file| %>
-      <li>
-        <%= link_to file.filename, url_for(file), target: "_blank" %>
-        <%= link_to 'Delete', delete_file_attachment_job_path(@job, file.id), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger btn-sm' %>
-      </li>
+<div class="container mt-4">
+  <!-- Buttons -->
+  <div class="text-center mb-4">
+    <%= link_to 'Edit', edit_job_path(@job), class: 'btn btn-primary mx-2' %>
+    <%= link_to 'Back', jobs_path, class: 'btn btn-secondary mx-2' %>
+    <%= form_with(url: job_path(@job), method: :delete, local: true) do |form| %>
+      <% if @job.salesman == current_user || current_user.super_admin? %>
+        <%= form.submit "Delete", data: { confirm: 'Are you sure?' }, class: 'btn btn-danger mx-2' %>
+      <% end %>
     <% end %>
-  </ul>
-<% else %>
-  <p>No attachments available.</p>
-<% end %>
-
-<h3>Add New Attachment</h3>
-<%= form_with(url: add_file_attachment_job_path(@job), method: :post, local: true, multipart: true) do |form| %>
-  <div class="form-group">
-    <%= form.label :files, "Upload File" %>
-    <%= form.file_field :files, multiple: true, class: 'form-control' %>
   </div>
-  <%= form.submit "Upload", class: 'btn btn-primary' %>
-<% end %>
+
+  <!-- Job Details Section 1 -->
+  <div class="card mb-4">
+    <div class="card-header text-center">
+      Job Details
+    </div>
+    <div class="card-body">
+      <p><strong>Job Number:</strong> <%= @job.job_number %></p>
+      <p><strong>Salesman:</strong> <%= @job.salesman.name %></p>
+      <p><strong>Category:</strong> 
+        <%= if @job.salesman.role == 'residential_salesman'
+              'Residential'
+            elsif @job.salesman.role == 'commercial_salesman'
+              'Commercial'
+            else
+              'Unknown'
+            end %>
+      </p>
+      <p><strong>Total:</strong> <%= number_to_currency(@job.total_amount) %></p>
+      <p><strong>Type:</strong> <%= @job.type_of_work %></p>
+      <p><strong>Converted from Appointment:</strong>
+        <% if @job.appointment.present? %>
+          <ul>
+            <li><strong>Title:</strong> <%= @job.appointment.title %></li>
+            <li><strong>Date:</strong> <%= @job.appointment.start_time.strftime("%B %d, %Y %I:%M %p") %></li>
+            <li><strong>Location:</strong> <%= @job.appointment.location %></li>
+          </ul>
+        <% else %>
+          <span>No appointment associated</span>
+        <% end %>
+      </p>
+    </div>
+  </div>
+
+  <!-- Job Details Section 2 -->
+  <div class="card mb-4">
+    <div class="card-header text-center">
+      Customer Details
+    </div>
+    <div class="card-body">
+      <p><strong>Customer Name:</strong> <%= @job.customer_name %></p>
+      <p><strong>Site Address:</strong> <%= @job.address %></p>
+      <p><strong>Customer Phone:</strong> <%= @job.customer_phone %></p>
+      <p><strong>Customer Email:</strong> <%= @job.customer_email %></p>
+    </div>
+  </div>
+
+  <!-- Job Details Section 3 -->
+  <div class="card mb-4">
+    <div class="card-header text-center">
+      Installation Details
+    </div>
+    <div class="card-body">
+      <p><strong>Installed By:</strong> <%= @job.crew ? @job.crew.name : 'No crew assigned' %></p>
+      <p><strong>Install Date:</strong> <%= format_date(@job.install_date) %></p>
+      <p><strong>Install Start Date:</strong> <%= format_date(@job.install_start_date) %></p>
+      <p><strong>Install End Date:</strong> <%= format_date(@job.install_end_date) %></p>
+    </div>
+  </div>
+
+  <!-- Attachments Section -->
+  <div class="card mb-4">
+    <div class="card-header text-center">
+      Attachments
+    </div>
+    <div class="card-body">
+      <h2>Attachments</h2>
+      <% if @job.files.attached? %>
+        <ul>
+          <% @job.files.each do |file| %>
+            <li>
+              <%= link_to file.filename, url_for(file), target: "_blank" %>
+              <%= link_to 'Delete', delete_file_attachment_job_path(@job, file.id), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger btn-sm' %>
+            </li>
+          <% end %>
+        </ul>
+      <% else %>
+        <p>No attachments available.</p>
+      <% end %>
+
+      <h3>Add New Attachment</h3>
+      <%= form_with(url: add_file_attachment_job_path(@job), method: :post, local: true, multipart: true) do |form| %>
+        <div class="form-group">
+          <%= form.label :files, "Upload File" %>
+          <%= form.file_field :files, multiple: true, class: 'form-control' %>
+        </div>
+        <%= form.submit "Upload", class: 'btn btn-primary' %>
+      <% end %>
+    </div>
+  </div>
+</div>

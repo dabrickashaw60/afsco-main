@@ -2,6 +2,7 @@ class CrewsController < ApplicationController
   before_action :authenticate_user!
   before_action :authorize_super_admin
   helper :application
+  before_action :set_crew, only: [:show, :edit, :update, :destroy]
 
 
   def index
@@ -11,6 +12,10 @@ class CrewsController < ApplicationController
   def new
     @crew = Crew.new
     @users = User.where(role: 'installer')
+  end
+
+  def show
+    @jobs = @crew.jobs
   end
 
   def create
@@ -48,6 +53,10 @@ class CrewsController < ApplicationController
 
   def crew_params
     params.require(:crew).permit(:name, :foreman_id, :laborer1_id, :laborer2_id)
+  end
+
+  def set_crew
+    @crew = Crew.find(params[:id])
   end
 
   def authorize_super_admin

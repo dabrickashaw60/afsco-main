@@ -1,22 +1,26 @@
 <div class="row">
   <div class="col-md-9">
-    <div class="calendar-navigation">
-      <% if @view_type == 'weekly' %>
-        <%= link_to '<', home_path(week: (@current_week == 1 ? 52 : @current_week - 1), year: (@current_week == 1 ? @current_year - 1 : @current_year), view: 'weekly'), class: 'nav-arrow' %>
-        <div class="current-week">
-          Week <%= @current_week %>, <%= @current_year %>
-        </div>
-        <%= link_to '>', home_path(week: (@current_week == 52 ? 1 : @current_week + 1), year: (@current_week == 52 ? @current_year + 1 : @current_year), view: 'weekly'), class: 'nav-arrow' %>
-      <% else %>
-        <%= link_to '<', home_path(month: (@current_month == 1 ? 12 : @current_month - 1), year: (@current_month == 1 ? @current_year - 1 : @current_year), view: 'monthly'), class: 'nav-arrow' %>
-        <div class="current-month">
-          <%= Date.new(@current_year, @current_month).strftime('%B %Y') %>
-        </div>
-        <%= link_to '>', home_path(month: (@current_month == 12 ? 1 : @current_month + 1), year: (@current_month == 12 ? @current_year + 1 : @current_year), view: 'monthly'), class: 'nav-arrow' %>
-      <% end %>
-      <%= link_to 'Toggle View', home_path(view: @view_type == 'monthly' ? 'weekly' : 'monthly'), class: 'btn btn-secondary' %>
-      <%= link_to 'Installer Calendar', installer_calendar_path, class: 'btn btn-secondary' %>
-      <!-- Toggle Button -->
+    <div class="calendar-navigation d-flex justify-content-between align-items-center mb-3">
+      <div class="d-flex align-items-center">
+        <% if @view_type == 'weekly' %>
+          <%= link_to '<', home_path(week: (@current_week == 1 ? 52 : @current_week - 1), year: (@current_week == 1 ? @current_year - 1 : @current_year), view: 'weekly'), class: 'nav-arrow' %>
+          <div class="current-week">
+            Week <%= @current_week %>, <%= @current_year %>
+          </div>
+          <%= link_to '>', home_path(week: (@current_week == 52 ? 1 : @current_week + 1), year: (@current_week == 52 ? @current_year + 1 : @current_year), view: 'weekly'), class: 'nav-arrow' %>
+        <% else %>
+          <%= link_to '<', home_path(month: (@current_month == 1 ? 12 : @current_month - 1), year: (@current_month == 1 ? @current_year - 1 : @current_year), view: 'monthly'), class: 'nav-arrow' %>
+          <div class="current-month">
+            <%= Date.new(@current_year, @current_month).strftime('%B %Y') %>
+          </div>
+          <%= link_to '>', home_path(month: (@current_month == 12 ? 1 : @current_month + 1), year: (@current_month == 12 ? @current_year + 1 : @current_year), view: 'monthly'), class: 'nav-arrow' %>
+        <% end %>
+      </div>
+      <div class="d-flex align-items-center">
+        <%= link_to (@view_type == 'monthly' ? 'Weekly View' : 'Monthly View'), home_path(view: @view_type == 'monthly' ? 'weekly' : 'monthly'), class: 'btn btn-secondary mr-2' %>
+        <%= link_to 'Installer Calendar', installer_calendar_path, class: 'btn btn-secondary mr-2' %>
+        <%= link_to 'New Appointment', new_appointment_path, class: 'btn btn-primary' %>
+      </div>
     </div>
 
     <% if @view_type == 'weekly' %>
@@ -85,38 +89,3 @@
     <%= render 'appointments/appointments_sidebar' %>
   </div>
 </div>
-
-<script>
-  function toggleNewAppointmentForm() {
-    var formContainer = document.getElementById('new-appointment-container');
-    if (formContainer.style.display === 'none') {
-      formContainer.style.display = 'block';
-    } else {
-      formContainer.style.display = 'none';
-    }
-  }
-
-  document.addEventListener('turbo:load', function() {
-    var newAppointmentForm = document.getElementById('new-appointment-form');
-    if (newAppointmentForm) {
-      newAppointmentForm.addEventListener('submit', function(event) {
-        event.preventDefault();
-        var formData = new FormData(newAppointmentForm);
-
-        fetch(newAppointmentForm.action, {
-          method: newAppointmentForm.method,
-          body: formData,
-          headers: {
-            'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content,
-            'Accept': 'text/vnd.turbo-stream.html'
-          }
-        })
-        .then(response => response.text())
-        .then(html => {
-          document.documentElement.innerHTML = html;
-        })
-        .catch(error => console.error('Error:', error));
-      });
-    }
-  });
-</script>

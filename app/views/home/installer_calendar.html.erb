@@ -1,15 +1,19 @@
 <div class="row">
   <div class="col-md-9">
-    <div class="calendar-navigation">
-      <%= link_to '<', installer_calendar_path(week: (@current_week == 1 ? 52 : @current_week - 1), year: (@current_week == 1 ? @current_year - 1 : @current_year)), class: 'nav-arrow' %>
-      <div class="current-week">
-        Week Ending: <%= @end_date.strftime("%m/%d/%y") %>
+    <div class="calendar-navigation d-flex justify-content-between align-items-center mb-3">
+      <div class="d-flex align-items-center">
+        <%= link_to '<', installer_calendar_path(week: (@current_week == 1 ? 52 : @current_week - 1), year: (@current_week == 1 ? @current_year - 1 : @current_year)), class: 'nav-arrow' %>
+        <div class="current-week mx-3 my-0">
+          Week Ending: <%= @end_date.strftime("%m/%d/%y") %>
+        </div>
+        <%= link_to '>', installer_calendar_path(week: (@current_week == 52 ? 1 : @current_week + 1), year: (@current_week == 52 ? @current_year + 1 : @current_year)), class: 'nav-arrow' %>
       </div>
-      <%= link_to '>', installer_calendar_path(week: (@current_week == 52 ? 1 : @current_week + 1), year: (@current_week == 52 ? @current_year + 1 : @current_year)), class: 'nav-arrow' %>
-      <%= link_to 'Back to Appointments Calendar', root_path, class: 'btn btn-secondary' %>
-      <% if current_user.super_admin? || current_user.admin? %>
-        <button onclick="openJobSelectionModal()" class="btn btn-primary" style="margin-left: 10px;">Assign Job</button>
-      <% end %>
+      <div class="d-flex align-items-center">
+        <%= link_to 'Back to Appointments Calendar', root_path, class: 'btn btn-secondary mr-2' %>
+        <% if current_user.super_admin? || current_user.admin? %>
+          <button onclick="openJobSelectionModal()" class="btn btn-primary">Assign Job</button>
+        <% end %>
+      </div>
     </div>
 
     <div class="calendar">
