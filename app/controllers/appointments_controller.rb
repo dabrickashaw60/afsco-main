@@ -83,7 +83,7 @@ class AppointmentsController < ApplicationController
   end
 
   def authorize_user!
-    redirect_to root_path, alert: 'Not authorized' unless @appointment.user == current_user
+    redirect_to root_path, alert: 'Not authorized' unless @appointment.user == current_user || current_user.super_admin? || current_user.admin?
   end
 
   def set_appointment

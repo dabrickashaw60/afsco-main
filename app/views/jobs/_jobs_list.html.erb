@@ -19,7 +19,9 @@
     <td>
       <%= link_to 'Show', job, class: 'btn btn-primary' %>
       <%= link_to 'Edit', edit_job_path(job), class: 'btn btn-secondary' %>
+       <% if current_user.super_admin? || current_user.admin? %>
       <%= link_to 'Destroy', job, method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger'   %>
+      <% end %>
     </td>
   </tr>
 <% end %>
