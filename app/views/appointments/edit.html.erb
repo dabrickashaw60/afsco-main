@@ -1,36 +1,48 @@
-<!-- app/views/appointments/edit.html.erb -->
 <h1>Edit Appointment</h1>
 
-<%= form_with model: @appointment, local: true do |form| %>
+<%= form_with(model: @appointment, local: true) do |form| %>
+  <% if @appointment.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@appointment.errors.count, "error") %> prohibited this appointment from being saved:</h2>
+      <ul>
+      <% @appointment.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
 
-  <div class="field">
-    <%= form.label :title %>
-    <%= form.text_field :title %>
-  </div>
+  <div class="card" style="width: 100%; max-width: 600px; margin: auto;">
+    <div class="card-body">
+      <div class="form-group">
+        <%= form.label :title %>
+        <%= form.text_field :title, class: 'form-control' %>
+      </div>
 
-  <div class="field">
-    <%= form.label :location %>
-    <%= form.text_field :location %>
-  </div>
+      <div class="form-group">
+        <%= form.label :location %>
+        <%= form.text_field :location, class: 'form-control' %>
+      </div>
 
-  <div class="field">
-    <%= form.label :start_time %>
-    <%= form.datetime_local_field :start_time %>
-  </div>
+      <div class="form-group">
+        <%= form.label :start_time %>
+        <%= form.datetime_local_field :start_time, class: 'form-control' %>
+      </div>
 
-  <div class="field">
-    <%= form.label :end_time %>
-    <%= form.datetime_local_field :end_time %>
-  </div>
+      <div class="form-group">
+        <%= form.label :end_time %>
+        <%= form.datetime_local_field :end_time, class: 'form-control' %>
+      </div>
 
-  <div class="field">
-    <%= form.label :user_id %>
-    <%= form.collection_select :user_id, User.where(role: ['commercial_salesman',	'residential_salesman', 'admin']), :id, :name, prompt: "Salesman" %>
-  </div>
+      <div class="form-group">
+        <%= form.label :user_id, 'Salesman' %>
+        <%= form.collection_select :user_id, User.where(role: ['commercial_salesman', 'residential_salesman', 'admin']), :id, :name, prompt: "Salesman", class: 'form-control' %>
+      </div>
 
-  <div class="actions">
-    <%= form.submit 'Update Appointment' %>
+      <div class="actions">
+        <%= form.submit 'Update Appointment', class: 'btn btn-primary' %>
+        <%= link_to 'Back', appointment_path(@appointment), class: 'btn btn-secondary' %>
+      </div>
+    </div>
   </div>
 <% end %>
-
-<%= link_to 'Back', root_path %>

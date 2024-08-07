@@ -23,9 +23,11 @@ class AppointmentsController < ApplicationController
   end
 
   def edit
+    @appointment = Appointment.find(params[:id])
   end
 
   def update
+    @appointment = Appointment.find(params[:id])
     if @appointment.update(appointment_params)
       redirect_to @appointment, notice: 'Appointment was successfully updated.'
     else
