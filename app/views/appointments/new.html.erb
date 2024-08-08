@@ -32,12 +32,12 @@
 
       <div class="form-group">
         <%= form.label :start_time %>
-        <%= form.datetime_local_field :start_time, class: "form-control" %>
+        <%= form.datetime_local_field :start_time, class: "form-control", step: 900 %>
       </div>
 
       <div class="form-group">
         <%= form.label :end_time %>
-        <%= form.datetime_local_field :end_time, class: "form-control" %>
+        <%= form.datetime_local_field :end_time, class: "form-control", step: 900 %>
       </div>
 
       <div class="text-center">
@@ -47,3 +47,21 @@
     <% end %>
   </div>
 </div>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    function enforce15MinuteIncrement(event) {
+      const input = event.target;
+      const date = new Date(input.value);
+      const minutes = date.getMinutes();
+      const roundedMinutes = Math.round(minutes / 15) * 15;
+      date.setMinutes(roundedMinutes);
+      input.value = date.toISOString().slice(0, 16);
+    }
+
+    const startTimeInput = document.querySelector('input[name="appointment[start_time]"]');
+    const endTimeInput = document.querySelector('input[name="appointment[end_time]"]');
+
+    startTimeInput.addEventListener('change', enforce15MinuteIncrement);
+    endTimeInput.addEventListener('change', enforce15MinuteIncrement);
+  });
+</script>

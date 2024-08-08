@@ -74,6 +74,7 @@
                     <div class="appointment">
                       <p>Salesman: <%= appointment.user.name %></p>
                       <strong><%= link_to appointment.title, appointment_path(appointment) %></strong>
+                      <p><%= appointment.start_time.strftime("%I:%M %p") %> - <%= appointment.end_time.strftime("%I:%M %p") %></p>
                       <p><%= link_to appointment.location, "https://www.google.com/maps/search/?api=1&query=#{CGI.escape(appointment.location)}", target: "_blank" %></p>
                     </div>
                   <% end %>
