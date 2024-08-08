@@ -76,6 +76,7 @@
         </div>
         <div class="modal-body" id="job-details">
           <!-- Job details will be dynamically loaded here -->
+          <div id="map" style="height: 100%;"></div>
         </div>
       </div>
     </div>
@@ -216,25 +217,30 @@
     });
   }
 
-  document.addEventListener('turbo:load', function() {
-    document.querySelectorAll('.job-details').forEach(function(element) {
-      element.addEventListener('click', function() {
-        var jobId = this.dataset.jobId;
-        fetch(`/jobs/${jobId}.json`)
-          .then(response => {
-            if (!response.ok) {
-              throw new Error('Network response was not ok');
-            }
-            return response.json();
-          })
-          .then(data => {
-            console.log('Received job data:', data);
+document.addEventListener('turbo:load', function() {
+  document.querySelectorAll('.job-details').forEach(function(element) {
+    element.addEventListener('click', function() {
+      var jobId = this.dataset.jobId;
+      fetch(`/jobs/${jobId}.json`)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          return response.json();
+        })
+        .then(data => {
+          console.log('Received job data:', data);
 
-            var jobDetails = `
+          const startAddress = "34 Big Boom Road, Queensbury NY 12804";
+          const endAddress = data.address;
+          const directionsUrl = `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(startAddress)}&destination=${encodeURIComponent(endAddress)}`;
+
+          var jobDetails = `
+            <div class="row">
               <div class="col-md-6" id="job-deets">
                 <p><strong>Job Number:</strong> ${data.job_number}</p>
                 <p><strong>Customer Name:</strong> ${data.customer_name}</p>
-                <p><strong>Address:</strong> ${data.address}</p>
+                <p><strong>Address:</strong> <a href="${directionsUrl}" target="_blank">${data.address}</a>  <span style="font-size: 10px">Click for directions</span></p>
                 <p><strong>Customer Phone:</strong> ${data.customer_phone}</p>
                 <p><strong>Customer Email:</strong> ${data.customer_email}</p>
                 <p><strong>Type of Work:</strong> ${data.type_of_work}</p>
@@ -242,68 +248,99 @@
                 <p><strong>Install Start Date:</strong> ${data.install_start_date || 'N/A'}</p>
                 <p><strong>Install End Date:</strong> ${data.install_end_date || 'N/A'}</p>
               </div>
-              <div class="col-md-12" id="job-attach">
-                <div id="attachments-carousel" class="carousel">
-                  ${data.files.map((file, index) => {
-                    if (!file || !file.url) {
-                      return '<p>File data missing or corrupt.</p>';
-                    }
-                    const fileType = file.url.split('.').pop().toLowerCase();
-                    return `<div class="carousel-item ${index === 0 ? 'active' : ''}">
-                      ${['jpg', 'jpeg', 'png', 'gif'].includes(fileType) ? 
-                      `<img src="${file.url}" alt="${file.filename || 'Image'}" style="max-width: 100%; margin-bottom: 10px;">` : 
-                      fileType === 'pdf' ? `<embed src="${file.url}" width="100%" height="100%" type="application/pdf">` : 
-                      `<a href="${file.url}" target="_blank">${file.filename || 'File'}</a>`}
-                    </div>`;
-                  }).join('') || '<p>No attachments available.</p>'}
-                </div>
-                <button class="carousel-control-prev" type="button" onclick="prevSlide()">&#10094;</button>
-                <button class="carousel-control-next" type="button" onclick="nextSlide()">&#10095;</button>
+              <div class="col-md-6" id="map-deets">
+                <div id="map" style="height: 100%;"></div>
               </div>
-            `;
-            document.getElementById('job-details').innerHTML = jobDetails;
-            document.getElementById('jobModal').style.display = 'block';
-            document.getElementById('overlay').style.display = 'block';
+            </div>
+            <div class="col-md-12" id="job-attach">
+              <div id="attachments-carousel" class="carousel">
+                ${data.files.map((file, index) => {
+                  if (!file || !file.url) {
+                    return '<p>File data missing or corrupt.</p>';
+                  }
+                  const fileType = file.url.split('.').pop().toLowerCase();
+                  return `<div class="carousel-item ${index === 0 ? 'active' : ''}">
+                    ${['jpg', 'jpeg', 'png', 'gif'].includes(fileType) ? 
+                    `<img src="${file.url}" alt="${file.filename || 'Image'}" style="max-width: 100%; margin-bottom: 10px;">` : 
+                    fileType === 'pdf' ? `<embed src="${file.url}" width="100%" height="100%" type="application/pdf">` : 
+                    `<a href="${file.url}" target="_blank">${file.filename || 'File'}</a>`}
+                  </div>`;
+                }).join('') || '<p>No attachments available.</p>'}
+              </div>
+              <button class="carousel-control-prev" type="button" onclick="prevSlide()">&#10094;</button>
+              <button class="carousel-control-next" type="button" onclick="nextSlide()">&#10095;</button>
+            </div>
+          `;
+          document.getElementById('job-details').innerHTML = jobDetails;
+          document.getElementById('jobModal').style.display = 'block';
+          document.getElementById('overlay').style.display = 'block';
 
-            initCarousel();
-          })
-          .catch(error => {
-            console.error('Error fetching job details:', error);
-            alert('An error occurred while fetching job details.');
-          });
-      });
+          // Initialize the map with the job's coordinates and address
+          if (data.latitude && data.longitude) {
+            initMap(data.latitude, data.longitude, data.address);
+          } else {
+            document.getElementById('map-deets').innerHTML = '<p>Location data not available</p>';
+          }
+          initCarousel();
+        })
+        .catch(error => {
+          console.error('Error fetching job details:', error);
+          alert('An error occurred while fetching job details.');
+        });
     });
   });
+});
 
-  let currentSlide = 0;
+function initMap(latitude, longitude, address) {
+  var map = L.map('map').setView([latitude, longitude], 13); // Center the map on the job's location
 
-  function initCarousel() {
-    const slides = document.querySelectorAll('#attachments-carousel .carousel-item');
-    if (slides.length > 0) {
-      showSlide(currentSlide);
-    }
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+  }).addTo(map);
+
+  var customIcon = L.icon({
+    iconUrl: '<%= asset_path("marker-icon.png") %>',
+    iconRetinaUrl: '<%= asset_path("marker-icon.png") %>',
+    iconSize: [25, 41], // size of the icon
+    iconAnchor: [12, 41], // point of the icon which will correspond to marker's location
+    popupAnchor: [1, -34], // point from which the popup should open relative to the iconAnchor
+  });
+
+  L.marker([latitude, longitude], { icon: customIcon }).addTo(map)
+    .bindPopup('<b>' + address + '</b>').openPopup();
+}
+
+let currentSlide = 0;
+
+function initCarousel() {
+  const slides = document.querySelectorAll('#attachments-carousel .carousel-item');
+  if (slides.length > 0) {
+    showSlide(currentSlide);
   }
+}
 
-  function showSlide(index) {
-    const slides = document.querySelectorAll('#attachments-carousel .carousel-item');
-    if (index >= slides.length) currentSlide = 0;
-    if (index < 0) currentSlide = slides.length - 1;
+function showSlide(index) {
+  const slides = document.querySelectorAll('#attachments-carousel .carousel-item');
+  if (index >= slides.length) currentSlide = 0;
+  if (index < 0) currentSlide = slides.length - 1;
 
-    slides.forEach(slide => slide.classList.remove('active'));
-    slides[currentSlide].classList.add('active');
-  }
+  slides.forEach(slide => slide.classList.remove('active'));
+  slides[currentSlide].classList.add('active');
+}
 
-  function nextSlide() {
-    showSlide(++currentSlide);
-  }
+function nextSlide() {
+  showSlide(++currentSlide);
+}
 
-  function prevSlide() {
-    showSlide(--currentSlide);
-  }
+function prevSlide() {
+  showSlide(--currentSlide);
+}
 
-  function closeJobModal() {
-    document.getElementById('jobModal').style.display = 'none';
-    document.getElementById('overlay').style.display = 'none';
-  }
+function closeJobModal() {
+  document.getElementById('jobModal').style.display = 'none';
+  document.getElementById('overlay').style.display = 'none';
+}
+
+
 
 </script>
